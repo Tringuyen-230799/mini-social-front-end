@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, Form, Input, Typography, Alert, Button } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
@@ -11,10 +11,16 @@ const { Title, Text } = Typography;
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if(user) {
+      router.push('/dashboard')
+    }
+  }, [user, router])
 
   const handleSubmit = async (values: { email: string; password: string }) => {
     setLoading(true);

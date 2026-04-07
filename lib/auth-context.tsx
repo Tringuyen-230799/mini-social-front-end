@@ -1,13 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { apiClient, API_ENDPOINTS } from '@/lib/api';
-
-interface User {
-  id: string;
-  email: string;
-  name: string;
-}
+import { fetchCurrentUser, loginUser, signupUser, logoutUser, User } from './auth-api';
 
 interface AuthContextType {
   user: User | null;
@@ -31,8 +25,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshUser = async () => {
     try {
-      const data = await apiClient<{ user: User }>(API_ENDPOINTS.auth.me);
-      setUser(data.user);
+      const userData = await fetchCurrentUser();
+      setUser(userData);
     } catch (error) {
       setUser(null);
     } finally {
@@ -41,23 +35,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (email: string, password: string) => {
-    const data = await apiClient<{ user: User }>(API_ENDPOINTS.auth.login, {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    });
-    setUser(data.user);
+    const userData = await loginUser(email, password);
+    console.log("user", userData);
+    setUser(userData);
   };
 
   const signup = async (name: string, email: string, password: string) => {
-    const data = await apiClient<{ user: User }>(API_ENDPOINTS.auth.signup, {
-      method: 'POST',
-      body: JSON.stringify({ name, email, password }),
-    });
-    setUser(data.user);
+    const userData = await signupUser(name, email, password);
+    setUser(userData);
   };
 
   const logout = async () => {
-    await apiClient(API_ENDPOINTS.auth.logout, { method: 'POST' });
+    await logoutUser();
     setUser(null);
   };
 
