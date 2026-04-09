@@ -18,7 +18,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if(user) {
-      router.push('/dashboard')
+      router.push('/')
     }
   }, [user, router])
 
@@ -28,7 +28,7 @@ export default function LoginPage() {
 
     try {
       await login(values.email, values.password);
-      router.push("/dashboard");
+      router.push("/");
     } catch (err: any) {
       setError(err.message || "Invalid email or password");
     } finally {
