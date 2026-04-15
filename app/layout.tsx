@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { AuthProvider } from "@/lib/auth-context";
+import { AuthProvider } from "@/app/(shared)/provider/authProvider";
 import "./globals.css";
+import SWRProvider from "./(shared)/provider/swrProvider";
 
 export const metadata: Metadata = {
   title: "Mini Social - Next.js + Express",
@@ -17,7 +18,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <AntdRegistry>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <SWRProvider>{children}</SWRProvider>
+          </AuthProvider>
         </AntdRegistry>
       </body>
     </html>
