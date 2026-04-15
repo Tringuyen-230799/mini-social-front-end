@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Card, Form, Input, Typography, Alert, Button } from 'antd';
 import { MailOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
-import { useAuth } from '@/lib/auth-context';
+import { useAuth } from '@/app/(shared)/provider/authProvider';
 
 const { Title, Text } = Typography;
 

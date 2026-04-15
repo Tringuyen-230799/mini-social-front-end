@@ -1,4 +1,4 @@
-import { useAuth } from "@/lib/auth-context";
+import { useAuth } from "@/app/(shared)/provider/authProvider";
 import {
   AppstoreOutlined,
   BellOutlined,

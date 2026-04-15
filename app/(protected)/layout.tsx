@@ -1,8 +1,9 @@
-'use client';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Spin } from 'antd';
-import { useAuth } from '@/lib/auth-context';
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Spin } from "antd";
+import { useAuth } from "@/app/(shared)/provider/authProvider";
+import { ModalStoreProvider } from "../(shared)/provider/StoreProvider";
 
 export default function ProtectedLayout({
   children,
@@ -14,13 +15,20 @@ export default function ProtectedLayout({
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/login');
+      router.push("/login");
     }
   }, [user, loading, router]);
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <Spin size="large" />
       </div>
     );
@@ -30,5 +38,9 @@ export default function ProtectedLayout({
     return null;
   }
 
-  return <>{children}</>;
+  return (
+    <ModalStoreProvider>
+      {children}
+    </ModalStoreProvider>
+  );
 }
