@@ -82,6 +82,7 @@ export default function Upload({
   const handleClear = () => {
     setPreviewImage("");
     URL.revokeObjectURL(previewImage);
+    onChange?.(undefined as unknown as File);
   };
 
   return (
