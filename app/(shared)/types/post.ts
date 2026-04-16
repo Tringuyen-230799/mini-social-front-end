@@ -1,21 +1,34 @@
-export type Post = Array<{
+export interface Post {
   id: number;
-  author: {
-    name: string;
-    avatar: string;
-    verified: boolean;
+  user_id: number;
+  content: string;
+  created_at: Date;
+  updated_at: Date;
+  images: Array<{
+    id: number;
+    url: string;
+    alt_text: string | null;
+  }>;
+  user: {
+    id: number;
+    username: string;
+    avatar_url: string | null;
   };
-  image: string;
-  title: string;
-  description: string;
-  likes: number;
-  comments: number;
-  timestamp: string;
-  liked: boolean;
-}>;
+}
 
 export interface CreatePostResponse {
   post: Post;
+  success?: boolean;
+  message?: string;
+}
+
+export interface AllPostsResponse {
+  data: {
+    totalCount: number;
+    content: Post[];
+    page: number;
+    totalPages: number;
+  };
   success?: boolean;
   message?: string;
 }
