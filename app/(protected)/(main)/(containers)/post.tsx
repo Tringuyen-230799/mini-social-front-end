@@ -1,13 +1,10 @@
 import { Card, Button, Avatar, Tag } from "antd";
-import {
-  CommentOutlined,
-  ShareAltOutlined,
-  BookOutlined,
-  LikeOutlined,
-} from "@ant-design/icons";
+import { CommentOutlined, LikeOutlined, UserOutlined } from "@ant-design/icons";
 import Paragraph from "antd/es/typography/Paragraph";
 import Text from "antd/es/typography/Text";
 import { Post as PostType } from "@/app/(shared)/types/post";
+import Image from "next/image";
+import { getTimeAgo } from "@/app/(shared)/utils/time";
 
 export default function Post({
   posts,
@@ -22,6 +19,7 @@ export default function Post({
         display: "flex",
         flexDirection: "column",
         gap: 16,
+        padding: "12px 0px",
       }}
     >
       {posts.map((post) => {
@@ -32,7 +30,16 @@ export default function Post({
           content,
         } = post!;
         return (
-          <Card key={post.id} style={{ overflow: "hidden" }}>
+          <Card
+            key={post.id}
+            style={{ overflow: "hidden" }}
+            styles={{
+              body: {
+                paddingBottom: 0,
+                paddingTop: 12,
+              },
+            }}
+          >
             <div
               style={{
                 display: "flex",
@@ -42,7 +49,11 @@ export default function Post({
               }}
               id={`user-${id}`}
             >
-              <Avatar size={40} src={avatar_url} />
+              <Avatar
+                size={40}
+                src={avatar_url}
+                icon={!avatar_url && <UserOutlined />}
+              />
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                   <Text strong>{username}</Text>
@@ -56,37 +67,35 @@ export default function Post({
                     </Tag>
                   )}
                 </div>
-                <Text type="secondary" style={{ fontSize: 12 }}>
-                  {new Date(created_at)?.toISOString()}
-                </Text>
+                <Text style={{ fontSize: 12 }}>{getTimeAgo(created_at)}</Text>
               </div>
             </div>
 
-            <div>
-              <Paragraph style={{ marginBottom: 16, color: "#666" }}>
-                {content}
-              </Paragraph>
-            </div>
+            <Paragraph>{content}</Paragraph>
 
             {!images?.length ? null : (
-              <div
+              <Image
+                src={`${process.env.NEXT_PUBLIC_API_URL}${images[0].url}`}
+                alt="preview"
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }}
+                width={400}
                 style={{
                   width: "100%",
-                  height: 360,
-                  background: `url(${process.env.NEXT_PUBLIC_API_URL}${images[0].url}) center/cover`,
-                  borderRadius: 8,
-                  marginBottom: 16,
+                  objectFit: "cover",
+                  borderRadius: "4px",
                 }}
+                height={400}
+                unoptimized
               />
             )}
 
             <div
               style={{
                 display: "flex",
-                gap: 16,
+                gap: 4,
                 marginBottom: 12,
-                paddingBottom: 12,
-                borderBottom: "1px solid #f0f0f0",
               }}
             >
               <Button
@@ -99,12 +108,6 @@ export default function Post({
               <Button type="text" icon={<CommentOutlined />}>
                 100
               </Button>
-              <Button type="text" icon={<ShareAltOutlined />} />
-              <Button
-                type="text"
-                icon={<BookOutlined />}
-                style={{ marginLeft: "auto" }}
-              />
             </div>
           </Card>
         );

@@ -10,8 +10,8 @@ export default function ModalProvider() {
     <Modal
       title={title}
       open={isOpen}
-      onCancel={close}
       footer={null}
+      closeIcon={false}
       styles={{
         container: {
           paddingBottom: '4px'

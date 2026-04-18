@@ -8,7 +8,8 @@ import useSWRInfinite from "swr/infinite";
 import { apiClient } from "@/lib/api";
 import { AllPostsResponse } from "@/app/(shared)/types/post";
 import { useIntersection } from "@/app/(shared)/hooks/useInfiniteScroll";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
+import { UPDATE_POST_EVENT } from "@/app/(shared)/constant/event";
 
 const getKey = (pageIndex: number, previousPageData: AllPostsResponse) => {
   if (previousPageData && !previousPageData?.data?.content?.length) {
@@ -18,10 +19,22 @@ const getKey = (pageIndex: number, previousPageData: AllPostsResponse) => {
 };
 
 export default function HomePage() {
-  const { data, size, setSize, isValidating } = useSWRInfinite<
+  const { data, size, setSize, isValidating, mutate } = useSWRInfinite<
     AllPostsResponse,
     Error
   >(getKey, apiClient);
+
+  const handleRefreshPosts = useCallback(() => {
+    setSize(1);
+    mutate();
+  }, [setSize, mutate]);
+
+  useEffect(() => {
+    window.addEventListener(UPDATE_POST_EVENT, handleRefreshPosts);
+    return () => {
+      window.removeEventListener(UPDATE_POST_EVENT, handleRefreshPosts);
+    };
+  }, [handleRefreshPosts]);
 
   const onLoadMore = useCallback(() => {
     if (isValidating || size === data?.[0]?.data?.totalPages) return;
@@ -29,10 +42,6 @@ export default function HomePage() {
   }, [size, setSize, data, isValidating]);
 
   const { targetRef } = useIntersection(onLoadMore);
-
-  if (!data) {
-    return null;
-  }
 
   const posts = data?.flatMap((page) => page?.data?.content || []) || [];
 
