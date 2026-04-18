@@ -1,0 +1,1 @@
+export const UPDATE_POST_EVENT = "UPDATE_POST_EVENT";

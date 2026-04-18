@@ -10,7 +10,7 @@ export const API_ENDPOINTS = {
     me: "/api/auth/me",
   },
   post: {
-    create: "/api/posts",
+    list: "/api/posts",
   },
 };
 

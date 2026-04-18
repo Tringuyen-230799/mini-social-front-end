@@ -2,8 +2,8 @@ export interface Post {
   id: number;
   user_id: number;
   content: string;
-  created_at: Date;
-  updated_at: Date;
+  created_at: string;
+  updated_at: string;
   images: Array<{
     id: number;
     url: string;
