@@ -28,64 +28,6 @@ const Comment = ({
     );
   }
 
-  // const comments =
-  //   data
-  //     ?.flatMap((data) => data.data.content)
-  //     .map((comment) => ({
-  //       ...comment,
-  //       comments: [
-  //         {
-  //           id: 1,
-  //           post_id: comment.post_id,
-  //           user_id: comment.user_id,
-  //           parent_comment_id: comment.id,
-  //           content: "what a nice post",
-  //           reply_user_id: null,
-  //           user: {
-  //             id: comment.user.id,
-
-  //             username: comment.user.username,
-  //             avatar: comment.user.avatar,
-  //           },
-  //           comments: [
-  //             {
-  //               id: 123,
-  //               post_id: comment.post_id,
-  //               user_id: comment.user_id,
-  //               parent_comment_id: comment.id,
-  //               content: "Hello world",
-  //               reply_user_id: null,
-  //               user: {
-  //                 id: comment.user.id,
-
-  //                 username: comment.user.username,
-  //                 avatar: comment.user.avatar,
-  //               },
-  //               created_at: new Date().toISOString(),
-  //               updated_at: new Date().toISOString(),
-  //             },
-  //             {
-  //               id: 124,
-  //               post_id: comment.post_id,
-  //               user_id: comment.user_id,
-  //               parent_comment_id: comment.id,
-  //               content: "Hi there",
-  //               reply_user_id: null,
-  //               user: {
-  //                 id: comment.user.id,
-
-  //                 username: comment.user.username,
-  //                 avatar: comment.user.avatar,
-  //               },
-  //               created_at: new Date().toISOString(),
-  //               updated_at: new Date().toISOString(),
-  //             },
-  //           ],
-  //           created_at: new Date().toISOString(),
-  //           updated_at: new Date().toISOString(),
-  //         },
-  //       ],
-  //     })) || [];
   const comments =
     data
       ?.flatMap((data) => data.data.content)

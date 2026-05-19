@@ -1,5 +1,5 @@
 'use client';
-import PostModal from "@/app/(protected)/(main)/(containers)/postModal";
+import PostModal from "@/app/(modules)/(protected)/(posts)/(containers)/postModal";
 import { useModalStore } from "@/app/(shared)/provider/StoreProvider";
 import { PlusOutlined } from "@ant-design/icons";
 import { Button, Layout } from "antd";
