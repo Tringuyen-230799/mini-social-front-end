@@ -1,18 +1,4 @@
-// API configuration
-export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-
-export const API_ENDPOINTS = {
-  auth: {
-    signup: "/api/auth/signup",
-    login: "/api/auth/login",
-    logout: "/api/auth/logout",
-    me: "/api/auth/me",
-  },
-  post: {
-    list: "/api/posts",
-  },
-};
+import { API_URL } from "@/app/(shared)/constant/endpoint";
 
 const TOKEN_KEY = "auth_token";
 
@@ -31,7 +17,6 @@ export function removeToken(): void {
   localStorage.removeItem(TOKEN_KEY);
 }
 
-// API client helper
 export async function apiClient<T>(
   endpoint: string,
   options?: RequestInit,
@@ -44,20 +29,22 @@ export async function apiClient<T>(
   const config: RequestInit = {
     ...options,
     headers: {
-      ...(!isFormData && { "Content-Type": "application/json" }), // Only set for non-FormData
+      ...(!isFormData && { "Content-Type": "application/json" }),
       ...(token && { Authorization: `Bearer ${token}` }),
       ...options?.headers,
     },
   };
+  try {
+    const response = await fetch(url, config);
 
-  const response = await fetch(url, config);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-  if (!response.ok) {
-    const error = await response
-      .json()
-      .catch(() => ({ message: "An error occurred" }));
-    throw new Error(error.message || `HTTP error! status: ${response.status}`);
+    return response.json();
+
+  } catch (error) {
+    console.error("API Client Error:", error);
+    throw error;
   }
-
-  return response.json();
 }

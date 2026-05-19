@@ -1,8 +1,9 @@
 "use client";
 import Upload from "@/app/(components)/upload";
+import { API_ENDPOINTS } from "@/app/(shared)/constant/endpoint";
 import { UPDATE_POST_EVENT } from "@/app/(shared)/constant/event";
 import { useModalStore } from "@/app/(shared)/provider/StoreProvider";
-import { API_ENDPOINTS, apiClient } from "@/lib/api";
+import { apiClient } from "@/lib/api";
 import { Button, Flex } from "antd";
 import Form from "antd/es/form/Form";
 import FormItem from "antd/es/form/FormItem";
@@ -13,7 +14,7 @@ import useSWRMutation from "swr/mutation";
 export default function PostModal() {
   const { close, isOpen } = useModalStore((state) => state);
   const { trigger, isMutating } = useSWRMutation(
-    `${API_ENDPOINTS.post.list}`,
+    `${API_ENDPOINTS.POST.LIST}`,
     async (url, { arg }: { arg: RequestInit }) => {
       return apiClient(url, arg);
     },
