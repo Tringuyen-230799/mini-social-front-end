@@ -1,28 +1,16 @@
 "use client";
 import Sidebar from "@/app/(components)/sidebar";
 import Header from "@/app/(components)/header";
-import Post from "./(containers)/post";
 import { Layout } from "antd";
 import { Content } from "antd/es/layout/layout";
-import useSWRInfinite from "swr/infinite";
-import { apiClient } from "@/lib/api";
-import { AllPostsResponse } from "@/app/(shared)/types/post";
 import { useIntersection } from "@/app/(shared)/hooks/useInfiniteScroll";
 import { useCallback, useEffect } from "react";
 import { UPDATE_POST_EVENT } from "@/app/(shared)/constant/event";
-
-const getKey = (pageIndex: number, previousPageData: AllPostsResponse) => {
-  if (previousPageData && !previousPageData?.data?.content?.length) {
-    return null;
-  }
-  return `/api/posts?page=${pageIndex + 1}&limit=10`;
-};
+import PostList from "./(containers)/PostList";
+import { usePost } from "@/app/(shared)/hooks/usePost";
 
 export default function HomePage() {
-  const { data, size, setSize, isValidating, mutate } = useSWRInfinite<
-    AllPostsResponse,
-    Error
-  >(getKey, apiClient);
+  const { data, size, setSize, isValidating, mutate } = usePost();
 
   const handleRefreshPosts = useCallback(() => {
     setSize(1);
@@ -58,7 +46,7 @@ export default function HomePage() {
             height: "100%",
           }}
         >
-          <Post posts={posts} toggleLike={() => {}} />
+          <PostList posts={posts} toggleLike={() => {}} />
           <div
             ref={targetRef}
             style={{ height: "10px", visibility: "hidden" }}

@@ -1,5 +1,4 @@
 'use client';
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { fetchCurrentUser, loginUser, signupUser, logoutUser, User } from '../../../lib/auth';
 
@@ -36,7 +35,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     const userData = await loginUser(email, password);
-    console.log("user", userData);
     setUser(userData);
   };
 
