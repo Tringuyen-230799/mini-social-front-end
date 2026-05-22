@@ -1,6 +1,6 @@
-'use client';
-import { FolderAddOutlined } from "@ant-design/icons";
-import { Input } from "antd";
+"use client";
+import { CloseOutlined, FolderAddOutlined } from "@ant-design/icons";
+import { Button, Input } from "antd";
 import Title from "antd/es/typography/Title";
 import Image from "next/image";
 import { useState, ChangeEvent, DragEvent } from "react";
@@ -9,12 +9,15 @@ export default function Upload({
   value,
   onChange,
 }: {
-  value?: File;
+  value?: File | string;
   onChange?: (file: File) => void;
 }) {
-  const [previewImage, setPreviewImage] = useState(
-    value ? URL.createObjectURL(value) : "",
-  );
+  const imageSrc =
+    value && typeof value !== "string"
+      ? URL.createObjectURL(value)
+      : (value as string) || "";
+
+  const [previewImage, setPreviewImage] = useState(imageSrc);
 
   const [isDragging, setIsDragging] = useState(false);
 
@@ -101,26 +104,20 @@ export default function Upload({
             src={previewImage}
             alt="Preview"
             fill
-            style={{ objectFit: "contain" }}
+            style={{ objectFit: "cover" }}
             unoptimized
           />
-          <button
+          <Button
             onClick={handleClear}
             style={{
               position: "absolute",
               top: "10px",
               right: "10px",
-              padding: "8px 16px",
-              background: "rgba(255, 255, 255, 0.9)",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontWeight: "500",
-              zIndex: 10,
             }}
-          >
-            Remove
-          </button>
+            size="medium"
+            shape="circle"
+            icon={<CloseOutlined />}
+          />
         </>
       ) : (
         <div
@@ -162,12 +159,11 @@ export default function Upload({
                 level={2}
                 style={{
                   color: isDragging ? "#1890ff" : "inherit",
-                  marginTop: "16px",
                 }}
               >
                 {isDragging ? "Drop your image here" : "Drag and drop"}
               </Title>
-              <p style={{ fontSize: "14px", color: "#999", marginTop: "8px" }}>
+              <p style={{ fontSize: "14px", color: "#999" }}>
                 or click to browse
               </p>
             </div>

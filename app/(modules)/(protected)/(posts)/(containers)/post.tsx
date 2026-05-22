@@ -1,19 +1,27 @@
-import { Card, Button, Avatar, Tag } from "antd";
-import { CommentOutlined, LikeOutlined, UserOutlined } from "@ant-design/icons";
+import { Card, Button, Avatar, Tag, Space, Dropdown } from "antd";
+import {
+  CommentOutlined,
+  DeleteFilled,
+  EditFilled,
+  EllipsisOutlined,
+  LikeOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import Paragraph from "antd/es/typography/Paragraph";
 import Text from "antd/es/typography/Text";
 import { Post as PostType } from "@/app/(shared)/types/post";
 import Image from "next/image";
 import { getTimeAgo } from "@/app/(shared)/utils/time";
-import Comment from "./comment";
 import { useState } from "react";
 
 export default function Post({
   post,
-  toggleLike,
+  isCanModify = false,
+  onEdit,
 }: {
   post: PostType;
-  toggleLike: (id: number) => void;
+  isCanModify?: boolean;
+  onEdit?: (postId: string | number) => void;
 }) {
   const [showComments, setShowComments] = useState(false);
 
@@ -34,43 +42,63 @@ export default function Post({
       style={{ overflow: "hidden" }}
       styles={{
         body: {
-          paddingBottom: 12,
-          paddingTop: 12,
+          padding: 0,
         },
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          marginBottom: 16,
-        }}
-        id={`user-${id}`}
-      >
-        <Avatar
-          size={40}
-          src={avatar_url}
-          icon={!avatar_url && <UserOutlined />}
-        />
-        <div style={{ flex: 1 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-            <Text strong>{username}</Text>
-
-            {avatar_url && (
-              <Tag
-                color="blue"
-                style={{ margin: 0, fontSize: 10, padding: "0 4px" }}
-              >
-                ✓
-              </Tag>
-            )}
+      <div className="p-4 space-y-2 relative">
+        {isCanModify && (
+          <div className="absolute right-4 cursor-pointer">
+            <Dropdown
+              className="rounded-none!"
+              menu={{
+                items: [
+                  {
+                    key: post.id + "edit",
+                    label: "Edit",
+                    icon: <EditFilled />,
+                    onClick: () => onEdit?.(post.id),
+                  },
+                  {
+                    key: post.id + "delete",
+                    label: "Delete",
+                    icon: <DeleteFilled />,
+                    onClick: () => console.log("clicked delete"),
+                  },
+                ],
+              }}
+              placement="bottomRight"
+            >
+              <EllipsisOutlined className="text-xl" />
+            </Dropdown>
           </div>
-          <Text style={{ fontSize: 12 }}>{getTimeAgo(created_at)}</Text>
-        </div>
-      </div>
+        )}
+        <div className="flex items-center gap-2" id={`user-${id}`}>
+          <Avatar
+            size={36}
+            src={avatar_url}
+            icon={!avatar_url && <UserOutlined />}
+          />
+          <div className="flex-1">
+            <div className="flex items-center gap-1">
+              <Text strong>{username}</Text>
 
-      <Paragraph>{content}</Paragraph>
+              {avatar_url && (
+                <Tag color="blue" className="m-0 text-xs px-1">
+                  ✓
+                </Tag>
+              )}
+            </div>
+            <Text
+              style={{ fontSize: 12 }}
+              className="font-medium! text-neutral-500!"
+            >
+              {getTimeAgo(created_at)}
+            </Text>
+          </div>
+        </div>
+        <Paragraph className="mb-0!">{content}</Paragraph>
+      </div>
 
       {!images?.length ? null : (
         <Image
@@ -83,9 +111,8 @@ export default function Post({
           style={{
             width: "100%",
             objectFit: "cover",
-            borderRadius: "4px",
           }}
-          className='h-100'
+          className="h-100"
           height={400}
           unoptimized
         />
@@ -94,32 +121,30 @@ export default function Post({
       <div
         style={{
           display: "flex",
-          marginBottom: 12,
         }}
       >
         <Button
           style={{
             color: "#1c1e21",
           }}
+          className="rounded-none!"
           type="text"
-          icon={<LikeOutlined style={{ fontSize: 20 }} />}
-          onClick={() => toggleLike(post.id)}
+          icon={<LikeOutlined style={{ fontSize: 18 }} />}
         >
           1000
         </Button>
         <Button
+          className="rounded-none!"
           style={{
             color: "#1c1e21",
           }}
           type="text"
-          icon={<CommentOutlined style={{ fontSize: 20 }} />}
+          icon={<CommentOutlined style={{ fontSize: 18 }} />}
           onClick={handleShowComments}
         >
           100
         </Button>
       </div>
-
-      <Comment showComments={showComments} postId={post.id}/>
     </Card>
   );
 }

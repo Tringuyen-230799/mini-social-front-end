@@ -10,7 +10,7 @@ const getKey = (pageIndex: number, previousPageData: AllPostsResponse) => {
   return `${API_ENDPOINTS.POST.LIST}?page=${pageIndex + 1}&limit=10`;
 };
 
-export const usePost = () => {
+export const usePosts = () => {
   const { data, size, setSize, isValidating, mutate } = useSWRInfinite<
     AllPostsResponse,
     Error

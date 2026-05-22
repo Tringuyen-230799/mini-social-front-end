@@ -2,9 +2,10 @@ import { API_ENDPOINTS } from '@/app/(shared)/constant/endpoint';
 import { apiClient, setToken, removeToken } from './api';
 
 export interface User {
-  id: string;
+  id: string | number;
   email: string;
-  name: string;
+  username: string;
+  avatar_url?: string;
 }
 
 interface ApiResponse<T> {
@@ -15,7 +16,7 @@ interface ApiResponse<T> {
 
 export async function fetchCurrentUser(): Promise<User> {
   const response = await apiClient<ApiResponse<User>>(API_ENDPOINTS.AUTH.ME);
-  return response.data;
+  return response.data.data;
 }
 
 export async function loginUser(email: string, password: string): Promise<User> {

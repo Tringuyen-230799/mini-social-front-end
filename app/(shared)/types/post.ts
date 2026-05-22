@@ -21,6 +21,12 @@ export interface CreatePostResponse {
   success?: boolean;
   message?: string;
 }
+export type EditPostResponse = CreatePostResponse;
+export type PostDetailResponse = {
+  success?: boolean;
+  message?: string;
+  data: Post;
+};
 
 export interface AllPostsResponse {
   data: {
