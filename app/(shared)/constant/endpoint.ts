@@ -7,6 +7,7 @@ export const API_ENDPOINTS = {
   },
   POST: {
     LIST: "/api/posts",
+    DETAIL: "/api/posts",
   },
   COMMENT: {
     LIST: '/api/comments',

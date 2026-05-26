@@ -4,7 +4,7 @@ export interface Post {
   content: string;
   created_at: string;
   updated_at: string;
-  images: Array<{
+  resources: Array<{
     id: number;
     url: string;
     alt_text: string | null;
@@ -21,6 +21,12 @@ export interface CreatePostResponse {
   success?: boolean;
   message?: string;
 }
+export type EditPostResponse = CreatePostResponse;
+export type PostDetailResponse = {
+  success?: boolean;
+  message?: string;
+  data: Post;
+};
 
 export interface AllPostsResponse {
   data: {

@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Spin } from "antd";
 import { useAuth } from "@/app/(shared)/provider/authProvider";
-import { ModalStoreProvider } from "../(shared)/provider/StoreProvider";
 
 export default function ProtectedLayout({
   children,
@@ -38,9 +37,5 @@ export default function ProtectedLayout({
     return null;
   }
 
-  return (
-    <ModalStoreProvider>
-      {children}
-    </ModalStoreProvider>
-  );
+  return children;
 }

@@ -2,9 +2,10 @@ import { API_ENDPOINTS } from '@/app/(shared)/constant/endpoint';
 import { apiClient, setToken, removeToken } from './api';
 
 export interface User {
-  id: string;
+  id: string | number;
   email: string;
-  name: string;
+  username: string;
+  avatar_url?: string;
 }
 
 interface ApiResponse<T> {
