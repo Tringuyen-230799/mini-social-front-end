@@ -16,7 +16,7 @@ interface ApiResponse<T> {
 
 export async function fetchCurrentUser(): Promise<User> {
   const response = await apiClient<ApiResponse<User>>(API_ENDPOINTS.AUTH.ME);
-  return response.data.data;
+  return response.data;
 }
 
 export async function loginUser(email: string, password: string): Promise<User> {

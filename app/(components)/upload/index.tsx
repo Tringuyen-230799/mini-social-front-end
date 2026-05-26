@@ -1,16 +1,22 @@
 "use client";
 import { CloseOutlined, FolderAddOutlined } from "@ant-design/icons";
-import { Button, Input } from "antd";
+import { Button, Input, Popover } from "antd";
 import Title from "antd/es/typography/Title";
 import Image from "next/image";
 import { useState, ChangeEvent, DragEvent } from "react";
 
 export default function Upload({
   value,
+  imgId,
+  isEditing = false,
+  onEdit,
   onChange,
 }: {
+  imgId: string | number;
   value?: File | string;
-  onChange?: (file: File) => void;
+  isEditing?: boolean;
+  onChange?: (file: File | null) => void;
+  onEdit?: (id: string | number) => void;
 }) {
   const imageSrc =
     value && typeof value !== "string"
@@ -41,11 +47,15 @@ export default function Upload({
     if (file && file.type.startsWith("image/")) {
       const objectUrl = URL.createObjectURL(file);
       setPreviewImage(objectUrl);
+      if (isEditing) {
+        onEdit?.(imgId!);
+      }
       onChange?.(file);
     }
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
     const file = e.target.files?.[0];
     if (file) {
       handleFile(file);
@@ -85,7 +95,10 @@ export default function Upload({
   const handleClear = () => {
     setPreviewImage("");
     URL.revokeObjectURL(previewImage);
-    onChange?.(undefined as unknown as File);
+    onChange?.(null);
+    if (isEditing) {
+      onEdit?.(imgId!);
+    }
   };
 
   return (
@@ -101,6 +114,7 @@ export default function Upload({
       {previewImage ? (
         <>
           <Image
+            id={imgId?.toString()}
             src={previewImage}
             alt="Preview"
             fill
@@ -114,10 +128,15 @@ export default function Upload({
               top: "10px",
               right: "10px",
             }}
-            size="medium"
+            size="middle"
             shape="circle"
             icon={<CloseOutlined />}
           />
+          {/* <Popover placement="leftTop">
+            <div className="w-full! h-full! text-white! absolute top-0 flex items-center justify-center bg-neutral-800/40">
+              Edit
+            </div>
+          </Popover> */}
         </>
       ) : (
         <div

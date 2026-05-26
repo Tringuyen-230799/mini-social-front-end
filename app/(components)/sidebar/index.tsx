@@ -4,6 +4,7 @@ import {
   BellOutlined,
   HomeOutlined,
   LogoutOutlined,
+  PlusOutlined,
   SettingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -25,15 +26,11 @@ const siderStyle: React.CSSProperties = {
   display: "flex",
 };
 
-const menuItems = [
-  { key: "home", icon: <HomeOutlined />, label: "Home" },
-  { key: "explore", icon: <AppstoreOutlined />, label: "Explore" },
-  { key: "notifications", icon: <BellOutlined />, label: "Notifications" },
-  { key: "profile", icon: <UserOutlined />, label: "Profile" },
-  { key: "settings", icon: <SettingOutlined />, label: "Settings" },
-];
-
-export default function Sidebar() {
+export default function Sidebar({
+  onOpenCreatePostModal,
+}: {
+  onOpenCreatePostModal: () => void;
+}) {
   const router = useRouter();
   const [expanded, setExpanded] = useState(false);
   const { user, logout } = useAuth();
@@ -65,10 +62,39 @@ export default function Sidebar() {
         }}
       >
         <Menu
-          items={menuItems.map((item) => ({
-            ...item,
-            label: expanded ? item.label : "",
-          }))}
+          items={[
+            {
+              key: "home",
+              icon: <HomeOutlined />,
+              label: expanded ? "Home" : "",
+            },
+            {
+              key: "explore",
+              icon: <AppstoreOutlined />,
+              label: expanded ? "Explore" : "",
+            },
+            {
+              key: "notifications",
+              icon: <BellOutlined />,
+              label: expanded ? "Notifications" : "",
+            },
+            {
+              key: "profile",
+              icon: <UserOutlined />,
+              label: expanded ? "Profile" : "",
+            },
+            {
+              key: "create",
+              icon: <PlusOutlined />,
+              label: expanded ? "Create Post" : "",
+              onClick: () => onOpenCreatePostModal(),
+            },
+            {
+              key: "settings",
+              icon: <SettingOutlined />,
+              label: expanded ? "Settings" : "",
+            },
+          ]}
           mode="inline"
           defaultSelectedKeys={["home"]}
           styles={{
@@ -88,7 +114,7 @@ export default function Sidebar() {
         />
         <div className="flex mt-auto ml-1 w-full">
           <Button
-            type='text'
+            type="text"
             size="large"
             icon={<LogoutOutlined />}
             onClick={handleLogout}

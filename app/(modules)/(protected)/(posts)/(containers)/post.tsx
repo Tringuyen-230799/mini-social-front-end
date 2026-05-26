@@ -1,4 +1,4 @@
-import { Card, Button, Avatar, Tag, Space, Dropdown } from "antd";
+import { Card, Button, Avatar, Tag, Dropdown } from "antd";
 import {
   CommentOutlined,
   DeleteFilled,
@@ -21,14 +21,14 @@ export default function Post({
 }: {
   post: PostType;
   isCanModify?: boolean;
-  onEdit?: (postId: string | number) => void;
+  onEdit?: (type: string, postId: string | number) => void;
 }) {
   const [showComments, setShowComments] = useState(false);
 
   const {
     user: { username, id, avatar_url },
     created_at,
-    images,
+    resources,
     content,
   } = post;
 
@@ -57,7 +57,7 @@ export default function Post({
                     key: post.id + "edit",
                     label: "Edit",
                     icon: <EditFilled />,
-                    onClick: () => onEdit?.(post.id),
+                    onClick: () => onEdit?.("edit", post.id),
                   },
                   {
                     key: post.id + "delete",
@@ -100,9 +100,9 @@ export default function Post({
         <Paragraph className="mb-0!">{content}</Paragraph>
       </div>
 
-      {!images?.length ? null : (
+      {!resources?.length ? null : (
         <Image
-          src={`${process.env.NEXT_PUBLIC_API_URL}${images[0].url}`}
+          src={`${resources[0].url}`}
           alt="preview"
           onError={(e) => {
             e.currentTarget.style.display = "none";

@@ -14,6 +14,9 @@ const usePostDetail = (
   const { data, error, isValidating, mutate } = useSWR<PostDetailResponse>(
     postId ? `${API_ENDPOINTS.POST.DETAIL}/${postId}` : null,
     apiClient,
+    {
+      revalidateOnFocus: false,
+    },
   );
 
   return {
