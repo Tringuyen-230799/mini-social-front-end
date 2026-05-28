@@ -8,6 +8,7 @@ export const API_ENDPOINTS = {
   POST: {
     LIST: "/api/posts",
     DETAIL: "/api/posts",
+    REMOVE: "/api/posts/trash"
   },
   COMMENT: {
     LIST: '/api/comments',

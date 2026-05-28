@@ -5,10 +5,12 @@ import { useAuth } from "@/app/(shared)/provider/authProvider";
 export default function PostList({
   posts,
   onEdit,
+  onDelete,
 }: {
   posts: PostTypes[];
   isCanModify?: boolean;
-  onEdit?: (type: string, postId: string | number) => void;
+  onEdit?: (type: "edit", postId: string | number) => void;
+  onDelete?: (type: "delete", postId: string | number) => void;
 }) {
   const { user } = useAuth();
   return (
@@ -27,6 +29,7 @@ export default function PostList({
             key={post.id}
             isCanModify={!!user && user.id === post.user.id}
             onEdit={onEdit}
+            onDelete={onDelete}
           />
         );
       })}

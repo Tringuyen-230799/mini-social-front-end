@@ -18,10 +18,12 @@ export default function Post({
   post,
   isCanModify = false,
   onEdit,
+  onDelete,
 }: {
   post: PostType;
   isCanModify?: boolean;
-  onEdit?: (type: string, postId: string | number) => void;
+  onEdit?: (type: "edit", postId: string | number) => void;
+  onDelete?: (type: "delete", postId: string | number) => void;
 }) {
   const [showComments, setShowComments] = useState(false);
 
@@ -63,7 +65,7 @@ export default function Post({
                     key: post.id + "delete",
                     label: "Delete",
                     icon: <DeleteFilled />,
-                    onClick: () => console.log("clicked delete"),
+                    onClick: () => onDelete?.("delete", post.id),
                   },
                 ],
               }}

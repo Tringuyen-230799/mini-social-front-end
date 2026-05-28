@@ -11,6 +11,7 @@ import TextArea from "antd/es/input/TextArea";
 import Text from "antd/es/typography/Text";
 import Title from "antd/es/typography/Title";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const EditForm = ({ post, onClose }: { post: Post; onClose: () => void }) => {
   const { content: initialContent, resources } = post;
@@ -26,10 +27,11 @@ const EditForm = ({ post, onClose }: { post: Post; onClose: () => void }) => {
     content !== initialContent || Boolean(file) || Boolean(oldImgIds);
 
   const { editPost, isEditing } = useEditPost(() => {
+    toast.success("Your post have been edited", {
+      position: "bottom-left",
+    });
     onClose();
   });
-
-  console.log(oldImgIds);
 
   const handleSubmit = () => {
     if (!isDirty) return;
@@ -137,7 +139,8 @@ const EditForm = ({ post, onClose }: { post: Post; onClose: () => void }) => {
               value={resources?.[0].url}
               onChange={setFile}
               onEdit={handleOnEdit}
-              isEditing
+              isEdit
+              loading={isEditing}
             />
           )}
           <Flex justify="flex-end" gap={8}>

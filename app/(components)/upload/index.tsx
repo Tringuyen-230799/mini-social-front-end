@@ -8,13 +8,15 @@ import { useState, ChangeEvent, DragEvent } from "react";
 export default function Upload({
   value,
   imgId,
-  isEditing = false,
+  isEdit = false,
   onEdit,
   onChange,
+  loading,
 }: {
   imgId: string | number;
   value?: File | string;
-  isEditing?: boolean;
+  isEdit?: boolean;
+  loading?: boolean;
   onChange?: (file: File | null) => void;
   onEdit?: (id: string | number) => void;
 }) {
@@ -47,7 +49,7 @@ export default function Upload({
     if (file && file.type.startsWith("image/")) {
       const objectUrl = URL.createObjectURL(file);
       setPreviewImage(objectUrl);
-      if (isEditing) {
+      if (isEdit) {
         onEdit?.(imgId!);
       }
       onChange?.(file);
@@ -96,7 +98,7 @@ export default function Upload({
     setPreviewImage("");
     URL.revokeObjectURL(previewImage);
     onChange?.(null);
-    if (isEditing) {
+    if (isEdit) {
       onEdit?.(imgId!);
     }
   };
@@ -121,17 +123,20 @@ export default function Upload({
             style={{ objectFit: "cover" }}
             unoptimized
           />
-          <Button
-            onClick={handleClear}
-            style={{
-              position: "absolute",
-              top: "10px",
-              right: "10px",
-            }}
-            size="middle"
-            shape="circle"
-            icon={<CloseOutlined />}
-          />
+
+          {!loading && (
+            <Button
+              onClick={handleClear}
+              style={{
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+              }}
+              size="middle"
+              shape="circle"
+              icon={<CloseOutlined />}
+            />
+          )}
           {/* <Popover placement="leftTop">
             <div className="w-full! h-full! text-white! absolute top-0 flex items-center justify-center bg-neutral-800/40">
               Edit
