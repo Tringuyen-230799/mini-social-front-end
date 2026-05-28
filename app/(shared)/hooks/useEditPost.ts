@@ -17,9 +17,7 @@ const fetcher = async (
   { arg }: { arg: EditPostPayload },
 ): Promise<Post> => {
   const formData = new FormData();
-  if (arg.content) {
-    formData.append("content", arg.content);
-  }
+  formData.append("content", arg.content ? arg.content : "");
   if (arg.images) {
     formData.append("images", arg.images);
   }
@@ -28,6 +26,9 @@ const fetcher = async (
       formData.append("oldImageIds", id?.toString());
     });
   }
+
+  console.log(formData);
+
   return apiClient(`${url}/${arg.postId}`, {
     method: "PATCH",
     body: formData,

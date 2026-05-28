@@ -3,6 +3,7 @@ import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { AuthProvider } from "@/app/(shared)/provider/authProvider";
 import "./globals.css";
 import SWRProvider from "./(shared)/provider/swrProvider";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Mini Social - Next.js + Express",
@@ -19,6 +20,7 @@ export default function RootLayout({
       <body suppressHydrationWarning>
         <AntdRegistry>
           <AuthProvider>
+            <Toaster richColors />
             <SWRProvider>{children}</SWRProvider>
           </AuthProvider>
         </AntdRegistry>

@@ -12,6 +12,7 @@ import TextArea from "antd/es/input/TextArea";
 import Text from "antd/es/typography/Text";
 import Title from "antd/es/typography/Title";
 import { useState } from "react";
+import { toast } from "sonner";
 import useSWRMutation from "swr/mutation";
 
 export default function CreatePostModal({ onClose }: { onClose: () => void }) {
@@ -27,6 +28,9 @@ export default function CreatePostModal({ onClose }: { onClose: () => void }) {
     },
     {
       onSuccess: () => {
+        toast.success("Your post have been create", {
+          position: "bottom-left",
+        });
         setFile(undefined);
         setContent("");
         onClose();
@@ -57,6 +61,7 @@ export default function CreatePostModal({ onClose }: { onClose: () => void }) {
 
   const handleOnClose = () => {
     if (content.trim().length || file) {
+      if (isMutating) return;
       setIsOpenDiscardModal(true);
       return;
     }
@@ -113,7 +118,12 @@ export default function CreatePostModal({ onClose }: { onClose: () => void }) {
           </FormItem>
 
           {openUpload && (
-            <Upload imgId={"upload"} value={file!} onChange={setFile} />
+            <Upload
+              imgId={"upload"}
+              value={file!}
+              onChange={setFile}
+              loading={isMutating}
+            />
           )}
 
           <Flex justify="flex-end" gap={8}>

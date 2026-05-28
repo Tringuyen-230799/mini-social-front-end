@@ -9,11 +9,12 @@ import PostList from "./(containers)/PostList";
 import { usePosts } from "@/app/(shared)/hooks/usePosts";
 import CreatePostModal from "./(containers)/CreatePostModal";
 import EditPostModal from "./(containers)/EditPostModal";
+import DeletePostModal from "./(containers)/DeletePostModal";
 
 export default function HomePage() {
   const { data, size, setSize, isValidating, mutate } = usePosts();
   const [modal, setModal] = useState<{
-    type: string | null;
+    type: "edit" | "create" | "delete" | null;
     postId?: string | number;
     open: boolean;
   }>({
@@ -43,11 +44,22 @@ export default function HomePage() {
 
   const posts = data?.flatMap((page) => page?.data?.content || []) || [];
 
-  const handleOpenModal = (type: string | null, postId?: string | number) => {
-    if (type === "create") {
-      setModal({ type, postId: undefined, open: true });
-    } else if (postId && type === "edit") {
-      setModal({ type, postId, open: true });
+  const handleOpenModal = (
+    type: "edit" | "create" | "delete" | null,
+    postId?: string | number,
+  ) => {
+    switch (type) {
+      case "create":
+        setModal({ type, postId: undefined, open: true });
+        break;
+
+      case "edit":
+        setModal({ type, postId, open: true });
+        break;
+
+      case "delete":
+        setModal({ type, postId, open: true });
+        break;
     }
   };
 
@@ -68,6 +80,15 @@ export default function HomePage() {
           }
         />
       )}
+      {modal.open && modal.type === "delete" && (
+        <DeletePostModal
+          open={modal.open}
+          postId={modal.postId!}
+          onClose={() =>
+            setModal({ type: "delete", postId: undefined, open: false })
+          }
+        />
+      )}
       <Layout style={{ height: "100dvh", overflowY: "scroll" }}>
         <Sidebar onOpenCreatePostModal={() => handleOpenModal("create")} />
         <Layout style={{ height: "100%" }}>
@@ -79,7 +100,11 @@ export default function HomePage() {
               height: "100%",
             }}
           >
-            <PostList posts={posts} onEdit={handleOpenModal} />
+            <PostList
+              posts={posts}
+              onEdit={handleOpenModal}
+              onDelete={handleOpenModal}
+            />
             <div
               ref={targetRef}
               style={{ height: "10px", visibility: "hidden" }}
