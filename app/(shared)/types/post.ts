@@ -4,6 +4,8 @@ export interface Post {
   content: string;
   created_at: string;
   updated_at: string;
+  total_likes: number;
+  isliked: boolean;
   resources: Array<{
     id: number;
     url: string;

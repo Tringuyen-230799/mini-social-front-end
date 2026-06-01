@@ -10,6 +10,7 @@ import { usePosts } from "@/app/(shared)/hooks/usePosts";
 import CreatePostModal from "./(containers)/CreatePostModal";
 import EditPostModal from "./(containers)/EditPostModal";
 import DeletePostModal from "./(containers)/DeletePostModal";
+import useToggleLike from "@/app/(shared)/hooks/useToggleLike";
 
 export default function HomePage() {
   const { data, size, setSize, isValidating, mutate } = usePosts();
@@ -40,6 +41,8 @@ export default function HomePage() {
     setSize(size + 1);
   }, [size, setSize, data, isValidating]);
 
+  const { toggleLike } = useToggleLike();
+
   const { targetRef } = useIntersection(onLoadMore);
 
   const posts = data?.flatMap((page) => page?.data?.content || []) || [];
@@ -61,6 +64,10 @@ export default function HomePage() {
         setModal({ type, postId, open: true });
         break;
     }
+  };
+
+  const handleToggleLike = (id: number, isLiked: boolean) => {
+    toggleLike({ id, isLiked });
   };
 
   return (
@@ -104,6 +111,7 @@ export default function HomePage() {
               posts={posts}
               onEdit={handleOpenModal}
               onDelete={handleOpenModal}
+              onToggleLike={handleToggleLike}
             />
             <div
               ref={targetRef}

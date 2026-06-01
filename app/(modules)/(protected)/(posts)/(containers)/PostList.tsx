@@ -1,16 +1,18 @@
 import { Post as PostTypes } from "@/app/(shared)/types/post";
-import Post from "./Post";
 import { useAuth } from "@/app/(shared)/provider/authProvider";
+import Post from "./post";
 
 export default function PostList({
   posts,
   onEdit,
   onDelete,
+  onToggleLike,
 }: {
   posts: PostTypes[];
   isCanModify?: boolean;
   onEdit?: (type: "edit", postId: string | number) => void;
   onDelete?: (type: "delete", postId: string | number) => void;
+  onToggleLike: (id: number, isLiked: boolean) => void;
 }) {
   const { user } = useAuth();
   return (
@@ -30,6 +32,7 @@ export default function PostList({
             isCanModify={!!user && user.id === post.user.id}
             onEdit={onEdit}
             onDelete={onDelete}
+            onToggleLike={onToggleLike}
           />
         );
       })}
