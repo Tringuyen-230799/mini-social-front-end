@@ -4,6 +4,7 @@ import {
   DeleteFilled,
   EditFilled,
   EllipsisOutlined,
+  LikeFilled,
   LikeOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -19,23 +20,35 @@ export default function Post({
   isCanModify = false,
   onEdit,
   onDelete,
+  onToggleLike,
 }: {
   post: PostType;
   isCanModify?: boolean;
   onEdit?: (type: "edit", postId: string | number) => void;
   onDelete?: (type: "delete", postId: string | number) => void;
+  onToggleLike: (id: number, isLiked: boolean) => void;
 }) {
-  const [showComments, setShowComments] = useState(false);
-
   const {
     user: { username, id, avatar_url },
     created_at,
     resources,
     content,
+    total_likes,
+    isliked,
   } = post;
+
+  const [showComments, setShowComments] = useState(false);
+  const [isLiked, setIsLiked] = useState(isliked);
+  const [totalLikes, setTotalLikes] = useState(total_likes);
 
   const handleShowComments = () => {
     setShowComments(!showComments);
+  };
+
+  const handleToggleLike = () => {
+    setIsLiked(!isLiked);
+    onToggleLike(post.id, !isLiked);
+    setTotalLikes((total) => (isLiked ? total - 1 : total + 1));
   };
 
   return (
@@ -109,14 +122,16 @@ export default function Post({
           onError={(e) => {
             e.currentTarget.style.display = "none";
           }}
-          width={400}
           style={{
             width: "100%",
             objectFit: "cover",
+            height: "auto",
           }}
-          className="h-100"
+          width={400}
           height={400}
+          className="h-100"
           unoptimized
+          loading="eager"
         />
       )}
 
@@ -126,14 +141,21 @@ export default function Post({
         }}
       >
         <Button
-          style={{
-            color: "#1c1e21",
-          }}
-          className="rounded-none!"
+          className="rounded-none! text-neutral-700! min-w-20!"
           type="text"
-          icon={<LikeOutlined style={{ fontSize: 18 }} />}
+          icon={
+            !isLiked ? (
+              <LikeOutlined style={{ fontSize: 18 }} />
+            ) : (
+              <LikeFilled
+                style={{ fontSize: 18 }}
+                className=" text-blue-700!"
+              />
+            )
+          }
+          onClick={handleToggleLike}
         >
-          1000
+          {totalLikes ? totalLikes : null}
         </Button>
         <Button
           className="rounded-none!"

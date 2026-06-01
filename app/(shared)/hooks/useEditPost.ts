@@ -27,8 +27,6 @@ const fetcher = async (
     });
   }
 
-  console.log(formData);
-
   return apiClient(`${url}/${arg.postId}`, {
     method: "PATCH",
     body: formData,
