@@ -5,6 +5,9 @@ import { IComment } from "@/app/(shared)/types/comments";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Button } from "antd";
 import { useState } from "react";
+import CommentInput from "./commentInput";
+import { getTimeAgo } from "@/app/(shared)/utils/time";
+import Text from "antd/es/typography/Text";
 
 const Comment = ({
   showComments,
@@ -22,92 +25,84 @@ const Comment = ({
     return null;
   }
 
-  if(!data?.[0]?.data?.content?.length) {
-    return (
-      <p className="text-neutral-500">Chưa có bình luận nào</p>
-    );
-  }
-
   const comments =
-    data
-      ?.flatMap((data) => data.data.content)
-      .map((comment) => comment) || [];
-  
+    data?.flatMap((data) => data.data.content).map((comment) => comment) || [];
 
   return (
-    <>
-      {comments.map((comment) => {
-        return <CommentItem key={comment.id} comment={comment} />;
-      })}
-    </>
+    <div className="">
+      <div className="">
+        {!comments.length ? (
+          <div className="text-neutral-500 text-center py-4">
+            No comments yet. Be the first to comment!
+          </div>
+        ) : (
+          <div className="pt-2 px-4">
+            {comments.map((comment) => {
+              return (
+                <CommentItem
+                  key={comment.id}
+                  comment={comment}
+                  postId={postId}
+                />
+              );
+            })}
+          </div>
+        )}
+        <CommentInput postId={postId} autoFocus className="px-3"/>
+      </div>
+    </div>
   );
 };
 
 const CommentItem = ({
   comment,
+  postId,
 }: {
   comment: IComment;
-  isParent?: boolean;
+  postId: number;
 }) => {
-  const [showReplies, setShowReplies] = useState(false);
+  const [showReply, setShowReply] = useState(false);
 
   return (
     <div className="mb-4">
-      <div>
-        <div className="flex items-center gap-2">
-          <Avatar
-            size={32}
-            src={comment.user.avatar}
-            icon={!comment.user.avatar && <UserOutlined />}
-          />
-          <p>{comment.content}</p>
+      <div className="flex items-start gap-2">
+        <Avatar
+          size={32}
+          src={comment.user.avatar}
+          icon={!comment.user.avatar && <UserOutlined />}
+          className="flex-shrink-0"
+        />
+        <div className="flex-1">
+          <div className="bg-gray-100 rounded-2xl px-3 py-2 inline-block max-w-full">
+            <p className="font-semibold text-sm">{comment.user.username}</p>
+            <p className="text-sm break-words">{comment.content}</p>
+          </div>
+          <div className="flex gap-4">
+            <Text
+              style={{ fontSize: 12 }}
+              className="font-medium! text-neutral-500!"
+            >
+              {getTimeAgo(comment.created_at)}
+            </Text>
+            <Text
+              style={{ fontSize: 12 }}
+              className="font-medium! text-neutral-500! hover:text-blue-600! hover:underline cursor-pointer"
+            >
+              like
+            </Text>
+            <Text
+              style={{ fontSize: 12 }}
+              className="font-medium! text-neutral-500! cursor-pointer"
+              onClick={() => setShowReply(!showReply)}
+            >
+              reply
+            </Text>
+          </div>
+          {showReply && <CommentInput postId={postId} parentId={comment.id} className="mt-2"/>}
         </div>
-        {!comment?.comments?.length ? null : (
-          <Button
-            type="text"
-            className="p-0! hover:bg-transparent! hover:text-neutral-950! ml-10 text-neutral-600!"
-            onClick={() => setShowReplies(!showReplies)}
-          >
-            {showReplies
-              ? "Ẩn bình luận"
-              : `Xem bình luận (${comment?.comments?.length || 0})`}
-          </Button>
-        )}
       </div>
-
-      {comment?.comments && comment.comments.length > 0 && showReplies && (
-        <div style={{ marginLeft: "35px" }}>
-          {comment.comments.map((reply) => {
-            return <CommentItem key={reply.id} comment={reply} />;
-          })}
-        </div>
-      )}
     </div>
   );
 };
 
-// const ReplyItem = ({ comment }: { comment: IComment[] }) => {
-//   return (
-//     <>
-//       <div style={{ marginLeft: "35px" }}>
-//         {comment.map((reply) => {
-//           return (
-//             <div key={reply.id}>
-//               <div className="mb-4">
-//                 <div className="flex items-center gap-2">
-//                   <Avatar
-//                     size={32}
-//                     src={reply.user.avatar}
-//                     icon={!reply.user.avatar && <UserOutlined />}
-//                   />
-//                   <p>{reply.content}</p>
-//                 </div>
-//               </div>
-//             </div>
-//           );
-//         })}
-//       </div>
-//     </>
-//   );
-// };
 export default Comment;

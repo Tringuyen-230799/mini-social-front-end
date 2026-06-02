@@ -27,3 +27,10 @@ export interface User {
   username: string;
   avatar: string;
 }
+
+export interface CreateCommentPayload {
+  content: string;
+  postId: number;
+  mentions?: Array<number>;
+  parentId?: number;
+}

@@ -14,6 +14,7 @@ import { Post as PostType } from "@/app/(shared)/types/post";
 import Image from "next/image";
 import { getTimeAgo } from "@/app/(shared)/utils/time";
 import { useState } from "react";
+import Comment from "./comment";
 
 export default function Post({
   post,
@@ -169,6 +170,7 @@ export default function Post({
           100
         </Button>
       </div>
+      <Comment showComments={showComments} postId={post.id} />
     </Card>
   );
 }
