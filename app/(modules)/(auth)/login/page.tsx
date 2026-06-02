@@ -1,10 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Card, Form, Input, Typography, Alert, Button } from "antd";
-import { MailOutlined, LockOutlined } from "@ant-design/icons";
+import { Form, Input, Typography, Alert, Button } from "antd";
 import Link from "next/link";
 import { useAuth } from "@/app/(shared)/provider/authProvider";
+import Background from "../(container)/background";
 
 const { Title, Text } = Typography;
 
@@ -16,10 +16,10 @@ export default function LoginPage() {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    if(user) {
-      router.push('/')
+    if (user) {
+      router.push("/");
     }
-  }, [user, router])
+  }, [user, router]);
 
   const handleSubmit = async (values: { email: string; password: string }) => {
     setLoading(true);
@@ -36,22 +36,16 @@ export default function LoginPage() {
   };
 
   return (
-    <Card style={{ maxWidth: 400, width: "100%" }}>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "24px",
-          width: "100%",
-        }}
-      >
+    <div className="flex-1 flex items-center justify-center p-4 relative">
+      <Background />
+      <div className="min-w-[400px]! flex flex-col gap-6">
         <Title level={2} style={{ textAlign: "center", marginBottom: 0 }}>
-          Welcome Back
+          Welcome To VibeMem
         </Title>
 
         {error && (
           <Alert
-            message={error}
+            title={error}
             type="error"
             showIcon
             closable
@@ -72,14 +66,14 @@ export default function LoginPage() {
               { type: "email", message: "Please enter a valid email" },
             ]}
           >
-            <Input prefix={<MailOutlined />} placeholder="Email" />
+            <Input placeholder="Email" />
           </Form.Item>
 
           <Form.Item
             name="password"
             rules={[{ required: true, message: "Please enter your password" }]}
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="Password" />
+            <Input.Password placeholder="Password" />
           </Form.Item>
 
           <Form.Item>
@@ -96,6 +90,6 @@ export default function LoginPage() {
           </Link>
         </Text>
       </div>
-    </Card>
+    </div>
   );
 }

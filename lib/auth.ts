@@ -1,5 +1,5 @@
-import { API_ENDPOINTS } from '@/app/(shared)/constant/endpoint';
-import { apiClient, setToken, removeToken } from './api';
+import { API_ENDPOINTS } from "@/app/(shared)/constant/endpoint";
+import { apiClient, setToken, removeToken } from "./api";
 
 export interface User {
   id: string | number;
@@ -19,37 +19,52 @@ export async function fetchCurrentUser(): Promise<User> {
   return response.data;
 }
 
-export async function loginUser(email: string, password: string): Promise<User> {
+export async function loginUser(
+  email: string,
+  password: string,
+): Promise<User> {
   const response = await apiClient<ApiResponse<{ user: User; token: string }>>(
     API_ENDPOINTS.AUTH.LOGIN,
     {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ email, password }),
-    }
+    },
   );
 
   setToken(response.data.token);
-  
+
   return response.data.user;
 }
 
-export async function signupUser(name: string, email: string, password: string): Promise<User> {
+export async function signupUser(
+  firstName: string,
+  lastName: string,
+  email: string,
+  password: string,
+  confirmPassword: string,
+): Promise<User> {
   const response = await apiClient<ApiResponse<{ user: User; token: string }>>(
     API_ENDPOINTS.AUTH.SIGNUP,
     {
-      method: 'POST',
-      body: JSON.stringify({ name, email, password }),
-    }
+      method: "POST",
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        email,
+        password,
+        confirmPassword,
+      }),
+    },
   );
-  
+
   setToken(response.data.token);
-  
+
   return response.data.user;
 }
 
 export async function logoutUser(): Promise<void> {
   try {
-    await apiClient(API_ENDPOINTS.AUTH.LOGOUT, { method: 'POST' });
+    await apiClient(API_ENDPOINTS.AUTH.LOGOUT, { method: "POST" });
   } finally {
     removeToken();
   }
