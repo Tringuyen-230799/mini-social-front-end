@@ -1,4 +1,5 @@
 import { API_URL } from "@/app/(shared)/constant/endpoint";
+import { error } from "console";
 
 const TOKEN_KEY = "auth_token";
 
@@ -38,11 +39,12 @@ export async function apiClient<T>(
     const response = await fetch(url, config);
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const error = (await response.json().catch((err) => err)) as Error;
+      const message = error.message || error.name || `HTTP status error 500`;
+      throw new Error(message);
     }
 
     return response.json();
-
   } catch (error) {
     console.error("API Client Error:", error);
     throw error;

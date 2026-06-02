@@ -13,3 +13,64 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.slick-list {
+  height: 100% !important;
+}
+
+/* Background animations */
+@keyframes float {
+  0% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) rotate(5deg) scale(1.05);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes float-slow {
+  0% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+  33% {
+    transform: translate(10px, -15px) rotate(-2deg);
+  }
+  66% {
+    transform: translate(-10px, 10px) rotate(2deg);
+  }
+  100% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+}
+
+@keyframes drift {
+  0% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(30px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+
+.animate-shape {
+  animation: float 10s ease-in-out infinite;
+}
+
+.animate-shape-slow {
+  animation: float-slow 18s ease-in-out infinite;
+}
+
+.animate-drift {
+  animation: drift 12s ease-in-out infinite;
+}
+
+.glass-shape {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.1);
+}

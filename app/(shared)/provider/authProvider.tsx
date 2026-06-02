@@ -1,12 +1,30 @@
-'use client';
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { fetchCurrentUser, loginUser, signupUser, logoutUser, User } from '../../../lib/auth';
+"use client";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import {
+  fetchCurrentUser,
+  loginUser,
+  signupUser,
+  logoutUser,
+  User,
+} from "../../../lib/auth";
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (name: string, email: string, password: string) => Promise<void>;
+  signup: (
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+    confirmPassword: string
+  ) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -17,7 +35,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Check if user is logged in on mount
   useEffect(() => {
     refreshUser();
   }, []);
@@ -38,8 +55,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(userData);
   };
 
-  const signup = async (name: string, email: string, password: string) => {
-    const userData = await signupUser(name, email, password);
+  const signup = async (
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+    confirmPassword: string
+  ) => {
+    const userData = await signupUser(firstName, lastName, email, password, confirmPassword);
     setUser(userData);
   };
 
@@ -49,7 +72,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, refreshUser }}>
+    <AuthContext.Provider
+      value={{ user, loading, login, signup, logout, refreshUser }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -58,7 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }
