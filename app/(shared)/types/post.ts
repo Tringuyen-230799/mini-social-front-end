@@ -6,6 +6,7 @@ export interface Post {
   updated_at: string;
   total_likes: number;
   isliked: boolean;
+  total_comment: number;
   resources: Array<{
     id: number;
     url: string;

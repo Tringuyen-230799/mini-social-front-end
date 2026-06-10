@@ -21,6 +21,10 @@ interface CommentInputProps {
   onCancel?: () => void;
   autoFocus?: boolean;
   className?: string;
+  reachLimit?: boolean;
+  rootCommentId?: number;
+  onCreate: (payload: CreateCommentPayload) => void
+  isCreating: boolean
 }
 
 const CommentInput = ({
@@ -29,21 +33,24 @@ const CommentInput = ({
   placeholder = "Write a comment...",
   autoFocus = true,
   className = "",
+  reachLimit,
+  rootCommentId,
+  onCreate,
+  isCreating
 }: CommentInputProps) => {
   const { user } = useAuth();
   const [content, setContent] = useState("");
-  const { createComment, isCreating } = useCreateComment();
 
   const handleSubmit = async () => {
     if (!content.trim()) return;
     const newComment = {
       content,
-      parentId,
+      parentId: reachLimit ? rootCommentId : parentId,
       postId,
     } as CreateCommentPayload;
 
     try {
-      createComment(newComment);
+      onCreate(newComment);
       setContent("");
     } catch (error) {
       console.error("Failed to post comment:", error);

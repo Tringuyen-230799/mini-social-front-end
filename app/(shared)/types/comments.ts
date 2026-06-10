@@ -18,8 +18,10 @@ export interface IComment {
   created_at: string;
   updated_at: string;
   reply_user_id: number | null;
+  total_replies: number;
   user: User;
-  comments?: IComment[];
+  replies?: IComment;
+  depth: number;
 }
 
 export interface User {
@@ -33,4 +35,10 @@ export interface CreateCommentPayload {
   postId: number;
   mentions?: Array<number>;
   parentId?: number;
+}
+
+export interface CreateCommentRespone {
+  status: number;
+  message: string;
+  data: IComment;
 }

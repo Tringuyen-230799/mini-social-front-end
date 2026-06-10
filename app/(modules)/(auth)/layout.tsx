@@ -19,8 +19,6 @@ export default function AuthLayout({
     }
   }, [user, loading, router]);
 
-  console.log(user)
-
   return (
     <div
       style={{

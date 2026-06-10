@@ -1,25 +1,25 @@
 import useSWRMutation from "swr/mutation";
 import { API_ENDPOINTS } from "../constant/endpoint";
-import { CreateCommentPayload, IComment } from "../types/comments";
+import { CreateCommentPayload, CreateCommentRespone, IComment } from "../types/comments";
 import { apiClient } from "@/lib/api";
 
 const fetcher = async (
   url: string,
   { arg }: { arg: CreateCommentPayload },
-): Promise<IComment> => {
+): Promise<CreateCommentRespone> => {
   return await apiClient(url, {
     method: "POST",
     body: JSON.stringify(arg),
   });
 };
 
-const useCreateComment = (onSuccess?: () => void) => {
+const useCreateComment = (onSuccess?: (data: IComment) => void) => {
   const { trigger, isMutating } = useSWRMutation(
     `${API_ENDPOINTS.COMMENT.LIST}`,
     fetcher,
     {
       onSuccess: (data) => {
-        onSuccess?.();
+        onSuccess?.(data.data);
       },
     },
   );
