@@ -1,5 +1,4 @@
 import { API_URL } from "@/app/(shared)/constant/endpoint";
-import { error } from "console";
 
 const TOKEN_KEY = "auth_token";
 
@@ -34,14 +33,27 @@ export async function apiClient<T>(
       ...(token && { Authorization: `Bearer ${token}` }),
       ...options?.headers,
     },
+    signal: AbortSignal.timeout(30000),
   };
+  
   try {
     const response = await fetch(url, config);
 
     if (!response.ok) {
-      const error = (await response.json().catch((err) => err)) as Error;
-      const message = error.message || error.name || `HTTP status error 500`;
-      throw new Error(message);
+      if (response.status == 401) {
+        removeToken();
+      }
+      let errorMessage = `HTTP error! Status: ${response.status}`;
+
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorMessage;
+        console.error("API Error:", errorData);
+      } catch (parseError) {
+        console.error("Failed to parse error response:", parseError);
+      }
+
+      throw new Error(errorMessage);
     }
 
     return response.json();

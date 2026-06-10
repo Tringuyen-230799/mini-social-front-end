@@ -1,11 +1,24 @@
+"use client";
 import { Flex } from "antd";
 import Banner from "./(container)/banner";
+import { useAuth } from "@/app/(shared)/provider/authProvider";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.push("/");
+    }
+  }, [user, loading, router]);
+
   return (
     <div
       style={{

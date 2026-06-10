@@ -63,7 +63,7 @@ export default function HomePage() {
       case "delete":
         setModal({ type, postId, open: true });
         break;
-    }
+    } 
   };
 
   const handleToggleLike = (id: number, isLiked: boolean) => {
@@ -96,7 +96,7 @@ export default function HomePage() {
           }
         />
       )}
-      <Layout style={{ height: "100dvh", overflowY: "scroll" }}>
+      <Layout style={{ height: "100dvh", overflowY: "auto" }}>
         <Sidebar onOpenCreatePostModal={() => handleOpenModal("create")} />
         <Layout style={{ height: "100%" }}>
           <Content
@@ -106,6 +106,7 @@ export default function HomePage() {
               minWidth: 620,
               height: "100%",
             }}
+            className="flex flex-col"
           >
             <PostList
               posts={posts}
@@ -113,10 +114,13 @@ export default function HomePage() {
               onDelete={handleOpenModal}
               onToggleLike={handleToggleLike}
             />
-            <div
-              ref={targetRef}
-              style={{ height: "10px", visibility: "hidden" }}
-            />
+
+            {!posts?.length ? null : (
+              <div
+                ref={targetRef}
+                style={{ height: "10px", visibility: "hidden" }}
+              />
+            )}
           </Content>
         </Layout>
       </Layout>

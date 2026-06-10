@@ -33,9 +33,5 @@ export default function ProtectedLayout({
     );
   }
 
-  if (!user) {
-    return null;
-  }
-
   return children;
 }

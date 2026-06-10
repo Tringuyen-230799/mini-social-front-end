@@ -11,10 +11,14 @@ const getKey = (pageIndex: number, previousPageData: AllPostsResponse) => {
 };
 
 export const usePosts = () => {
-  const { data, size, setSize, isValidating, mutate } = useSWRInfinite<
+  const { data, size, setSize, isValidating, mutate, error } = useSWRInfinite<
     AllPostsResponse,
     Error
-  >(getKey, apiClient);
+  >(getKey, apiClient, {
+    shouldRetryOnError: false, 
+    errorRetryCount: 0,
+    onErrorRetry: undefined
+  });
 
-  return { data, size, setSize, isValidating, mutate };
+  return { data, size, setSize, isValidating, mutate, error };
 };

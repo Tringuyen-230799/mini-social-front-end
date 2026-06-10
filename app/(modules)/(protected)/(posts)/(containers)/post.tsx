@@ -14,6 +14,7 @@ import { Post as PostType } from "@/app/(shared)/types/post";
 import Image from "next/image";
 import { getTimeAgo } from "@/app/(shared)/utils/time";
 import { useState } from "react";
+import Comment from "./comment";
 
 export default function Post({
   post,
@@ -35,11 +36,13 @@ export default function Post({
     content,
     total_likes,
     isliked,
+    total_comment,
   } = post;
 
   const [showComments, setShowComments] = useState(false);
   const [isLiked, setIsLiked] = useState(isliked);
   const [totalLikes, setTotalLikes] = useState(total_likes);
+  const [totalComments, setTotalComments] = useState(total_comment);
 
   const handleShowComments = () => {
     setShowComments(!showComments);
@@ -158,7 +161,7 @@ export default function Post({
           {totalLikes ? totalLikes : null}
         </Button>
         <Button
-          className="rounded-none!"
+          className="rounded-none! text-neutral-700! min-w-20!"
           style={{
             color: "#1c1e21",
           }}
@@ -166,9 +169,14 @@ export default function Post({
           icon={<CommentOutlined style={{ fontSize: 18 }} />}
           onClick={handleShowComments}
         >
-          100
+          {totalComments ? totalComments : null}
         </Button>
       </div>
+      <Comment
+        showComments={showComments}
+        postId={post.id}
+        onIncreaseTotalComment={() => setTotalComments((total) => total + 1)}
+      />
     </Card>
   );
 }

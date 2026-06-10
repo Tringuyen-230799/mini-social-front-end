@@ -16,6 +16,7 @@ const Banner = () => {
             fill
             className="object-cover"
             priority
+            loading="eager"
           />
         </div>
         <div className="relative w-full h-screen">
@@ -24,6 +25,7 @@ const Banner = () => {
             alt="banner"
             fill
             className="object-cover"
+            loading="eager"
           />
         </div>
         <div className="relative w-full h-screen">
@@ -32,6 +34,7 @@ const Banner = () => {
             alt="banner"
             fill
             className="object-cover"
+            loading="eager"
           />
         </div>
       </Carousel>

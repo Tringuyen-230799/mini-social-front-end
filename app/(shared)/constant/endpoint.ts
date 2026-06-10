@@ -12,6 +12,7 @@ export const API_ENDPOINTS = {
   },
   COMMENT: {
     LIST: '/api/comments',
+    REPLY: '/api/comments/replies'
   },
 };
 

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { apiClient } from "@/lib/api";
 import { SWRConfig, SWRConfiguration } from "swr";
 
@@ -20,6 +20,9 @@ export default function SWRProvider({
     onError: (error) => {
       console.error("SWR Error:", error);
     },
+    shouldRetryOnError: false,
+    errorRetryCount: 0,
+    onErrorRetry: undefined,
   };
 
   return <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>;
