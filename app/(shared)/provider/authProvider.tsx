@@ -13,6 +13,7 @@ import {
   logoutUser,
   User,
 } from "../../../lib/auth";
+import { socket, reconnectSocket } from "@/app/socket";
 
 interface AuthContextType {
   user: User | null;
@@ -53,6 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     const userData = await loginUser(email, password);
     setUser(userData);
+    reconnectSocket(); // Reconnect socket with new token
   };
 
   const signup = async (
@@ -63,11 +65,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     confirmPassword: string
   ) => {
     const userData = await signupUser(firstName, lastName, email, password, confirmPassword);
+    reconnectSocket(); // Reconnect socket with new token
     setUser(userData);
   };
 
   const logout = async () => {
     await logoutUser();
+    socket.disconnect();
     setUser(null);
   };
 
