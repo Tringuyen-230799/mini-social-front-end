@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     const userData = await loginUser(email, password);
     setUser(userData);
-    reconnectSocket(); // Reconnect socket with new token
+    reconnectSocket();
   };
 
   const signup = async (
@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     confirmPassword: string
   ) => {
     const userData = await signupUser(firstName, lastName, email, password, confirmPassword);
-    reconnectSocket(); // Reconnect socket with new token
+    reconnectSocket()
     setUser(userData);
   };
 
