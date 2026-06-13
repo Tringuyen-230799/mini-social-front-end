@@ -129,7 +129,7 @@ const CommentItem = ({
   };
 
   return (
-    <div className={`mb-4 ${classNames}`}>
+    <div className={`mb-4 ${classNames} `}>
       <div className="flex items-start gap-2">
         <Avatar
           size={32}
