@@ -20,7 +20,7 @@ export interface IComment {
   reply_user_id: number | null;
   total_replies: number;
   user: User;
-  replies?: IComment;
+  replies?: IComment[];
   depth: number;
 }
 

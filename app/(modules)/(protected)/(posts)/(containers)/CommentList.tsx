@@ -2,16 +2,14 @@
 
 import { useComment } from "@/app/(shared)/hooks/useComment";
 import { CreateCommentPayload, IComment } from "@/app/(shared)/types/comments";
-import { UserOutlined } from "@ant-design/icons";
-import { Avatar } from "antd";
 import { useEffect, useState } from "react";
-import CommentInput from "./commentInput";
-import { getTimeOfComment } from "@/app/(shared)/utils/time";
-import Text from "antd/es/typography/Text";
+import CommentInput from "./CommentInput";
 import { useParentComment } from "@/app/(shared)/hooks/useParentComment";
 import useCreateComment from "@/app/(shared)/hooks/useCreateComment";
+import { cn } from "@/app/(shared)/utils/clsx";
+import { Comment } from "@/app/(components)/comment";
 
-const Comment = ({
+const CommentList = ({
   showComments,
   postId,
   onIncreaseTotalComment,
@@ -76,6 +74,7 @@ const Comment = ({
         className="px-3"
         isCreating={isCreating}
         onCreate={handleOncreate}
+        depth={0}
       />
     </div>
   );
@@ -129,97 +128,41 @@ const CommentItem = ({
   };
 
   return (
-    <div className={`mb-4 ${classNames} `}>
-      <div className="flex items-start gap-2">
-        <Avatar
-          size={32}
-          src={comment.user.avatar}
-          icon={!comment.user.avatar && <UserOutlined />}
-          className="flex-shrink-0"
+    <div
+      className={cn(`mb-4`, classNames, {
+        "mb-0 ": depth > 0,
+        "pl-10 pt-2": depth > 0,
+        "depth-0": depth === 0,
+        "comment-row": depth > 0,
+      })}
+    >
+      <div className="li-comment">
+        <Comment
+          comment={comment}
+          setShowReply={setShowReply}
+          showReply={showReply}
+          setShowReplyInput={setShowReplyInput}
+          showReplyInput={showReplyInput}
+          totalReplies={totalReplies}
         />
-        <div className="flex-1">
-          <div className="bg-gray-100 rounded-2xl px-3 py-2 inline-block max-w-full">
-            <p className="font-semibold text-sm">{comment.user.username}</p>
-            <p className="text-sm break-words">{comment.content}</p>
-          </div>
-          <div className="flex gap-4">
-            <Text
-              style={{ fontSize: 12 }}
-              className="font-medium! text-neutral-500!"
-            >
-              {getTimeOfComment(comment.created_at)}
-            </Text>
-            <Text
-              style={{ fontSize: 12 }}
-              className="font-medium! text-neutral-500! hover:text-blue-600! hover:underline cursor-pointer"
-            >
-              like
-            </Text>
-            <Text
-              style={{ fontSize: 12 }}
-              className="font-medium! text-neutral-500! cursor-pointer"
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowReplyInput(!showReplyInput);
-              }}
-            >
-              reply
-            </Text>
-            {totalReplies > 0 && (
-              <Text
-                style={{ fontSize: 12 }}
-                className="font-medium! text-neutral-500! cursor-pointer"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowReply(!showReply);
-                }}
-              >
-                {showReply
-                  ? "Hide all the comments"
-                  : `See all the comments (${totalReplies})`}
-              </Text>
-            )}
-          </div>
-
-          {showReply && replies?.length > 0 && (
+        {showReply && replies?.length > 0 && (
+          <div className={`depth-${comment.depth + 1} ul-comment`}>
             <>
               {replies.map((rep) => (
                 <CommentItem
                   key={rep.id}
                   comment={rep}
                   postId={rep.post_id}
-                  classNames="mt-2 !mb-0"
                   depth={rep.depth}
                   onIncreaseTotalComment={onIncreaseTotalComment}
                 />
               ))}
             </>
-          )}
-
-          {showReplyInput && !reachLimitDepth && (
-            <CommentInput
-              postId={postId}
-              parentId={comment.id}
-              className="mt-2"
-              onCreate={handleOncreate}
-              isCreating={isCreating}
-            />
-          )}
-        </div>
+          </div>
+        )}
       </div>
-      {showReplyInput && reachLimitDepth && (
-        <CommentInput
-          postId={postId}
-          parentId={comment.id}
-          className="mt-2"
-          reachLimit={reachLimitDepth}
-          rootCommentId={comment.parent_comment_id!}
-          onCreate={handleOncreate}
-          isCreating={isCreating}
-        />
-      )}
     </div>
   );
 };
 
-export default Comment;
+export default CommentList;
