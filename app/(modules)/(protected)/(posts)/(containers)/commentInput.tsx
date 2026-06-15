@@ -3,6 +3,7 @@
 import useCreateComment from "@/app/(shared)/hooks/useCreateComment";
 import { useAuth } from "@/app/(shared)/provider/authProvider";
 import { CreateCommentPayload } from "@/app/(shared)/types/comments";
+import { cn } from "@/app/(shared)/utils/clsx";
 import {
   UserOutlined,
   SendOutlined,
@@ -23,8 +24,9 @@ interface CommentInputProps {
   className?: string;
   reachLimit?: boolean;
   rootCommentId?: number;
-  onCreate: (payload: CreateCommentPayload) => void
-  isCreating: boolean
+  onCreate: (payload: CreateCommentPayload) => void;
+  isCreating: boolean;
+  depth: number;
 }
 
 const CommentInput = ({
@@ -36,7 +38,8 @@ const CommentInput = ({
   reachLimit,
   rootCommentId,
   onCreate,
-  isCreating
+  isCreating,
+  depth,
 }: CommentInputProps) => {
   const { user } = useAuth();
   const [content, setContent] = useState("");
@@ -65,7 +68,11 @@ const CommentInput = ({
   };
 
   return (
-    <div className={`flex items-start gap-2 pb-2 ${className}`}>
+    <div
+      className={cn("flex items-start gap-2 pb-2", {
+        "pl-10 pt-2": !reachLimit && depth != 0,
+      }, className)}
+    >
       <Avatar
         size={32}
         src={user?.avatar_url}
