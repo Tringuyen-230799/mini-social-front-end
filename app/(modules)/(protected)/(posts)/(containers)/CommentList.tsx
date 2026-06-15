@@ -127,42 +127,118 @@ const CommentItem = ({
     createComment(payload);
   };
 
+  console.log(showReply);
+
   return (
-    <div
-      className={cn(`mb-4`, classNames, {
-        "mb-0 ": depth > 0,
-        "pl-10 pt-2": depth > 0,
-        "depth-0": depth === 0,
-        "comment-row": depth > 0,
-      })}
-    >
-      <div className="li-comment">
-        <Comment
-          comment={comment}
-          setShowReply={setShowReply}
-          showReply={showReply}
-          setShowReplyInput={setShowReplyInput}
-          showReplyInput={showReplyInput}
-          totalReplies={totalReplies}
-        />
-        {showReply && replies?.length > 0 && (
-          <div className={`depth-${comment.depth + 1} ul-comment`}>
-            <>
-              {replies.map((rep) => (
-                <CommentItem
-                  key={rep.id}
-                  comment={rep}
-                  postId={rep.post_id}
-                  depth={rep.depth}
-                  onIncreaseTotalComment={onIncreaseTotalComment}
+    <>
+      <div
+        className={cn(`mb-4`, classNames, {
+          "mb-0 ": depth > 0,
+          "pl-10 pt-2": depth > 0,
+          "depth-0": depth === 0,
+          "comment-row": depth > 0,
+        })}
+      >
+        <div className="li-comment">
+          <Comment
+            comment={comment}
+            setShowReply={setShowReply}
+            showReply={showReply}
+            setShowReplyInput={setShowReplyInput}
+            showReplyInput={showReplyInput}
+            totalReplies={totalReplies}
+          />
+
+          {showReply && replies?.length > 0 && (
+            <div className={`depth-${comment.depth + 1} ul-comment`}>
+              <>
+                {replies.map((rep) => (
+                  <CommentItem
+                    key={rep.id}
+                    comment={rep}
+                    postId={rep.post_id}
+                    depth={rep.depth}
+                    onIncreaseTotalComment={onIncreaseTotalComment}
+                  />
+                ))}
+                {showReplyInput && (
+                  <CommentInput
+                    postId={postId}
+                    depth={comment.depth + 1}
+                    isCreating={isCreating}
+                    onCreate={handleOncreate} 
+                    reachLimit={reachLimitDepth}
+                    parentId={comment.id}
+                    rootCommentId={comment.parent_comment_id!}
+                    className="comment-row"
+                  />
+                )}
+              </>
+            </div>
+          )}
+
+          {showReplyInput && replies?.length === 0 && !reachLimitDepth && (
+            <div className={`depth-${comment.depth + 1} ul-comment`}>
+              <>
+                {replies.map((rep) => (
+                  <CommentItem
+                    key={rep.id}
+                    comment={rep}
+                    postId={rep.post_id}
+                    depth={rep.depth}
+                    onIncreaseTotalComment={onIncreaseTotalComment}
+                  />
+                ))}
+                <CommentInput
+                  postId={postId}
+                  depth={comment.depth + 1}
+                  isCreating={isCreating}
+                  onCreate={createComment}
+                  reachLimit={reachLimitDepth}
+                  parentId={comment.id}
+                  rootCommentId={comment.parent_comment_id!}
+                  className="comment-row"
                 />
-              ))}
-            </>
-          </div>
-        )}
+              </>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+
+      {showReplyInput && reachLimitDepth && (
+        <div
+          className={cn(`mb-4 comment-row pl-10`, classNames, {
+            "mb-0 ": depth > 0,
+            "pt-2": depth > 0,
+          })}
+        >
+          <CommentInput
+            postId={postId}
+            depth={comment.depth + 1}
+            isCreating={isCreating}
+            onCreate={createComment}
+            reachLimit={reachLimitDepth}
+            parentId={comment.id}
+            rootCommentId={comment.parent_comment_id!}
+          />
+        </div>
+      )}
+    </>
   );
 };
 
 export default CommentList;
+
+{
+  /* {showReplyInput && (
+        <CommentInput
+          postId={postId}
+          depth={comment.depth}
+          isCreating={isCreating}
+          onCreate={createComment}
+          reachLimit={reachLimitDepth}
+          parentId={comment.id}
+          rootCommentId={comment.parent_comment_id!}
+        />
+      )} */
+}

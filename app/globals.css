@@ -197,3 +197,20 @@ body {
   }
 }
 
+.depth-3.ul-comment > .comment-row.cmt-input-reach-limit {
+  position: relative;
+
+  &:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: 1rem;
+    top: 0rem;
+    bottom: 0;
+    width: 2px;
+  }
+
+  &::after {
+    display: none;
+  }
+}
+

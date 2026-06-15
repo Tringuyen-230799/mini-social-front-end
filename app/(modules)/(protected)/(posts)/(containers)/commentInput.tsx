@@ -69,9 +69,9 @@ const CommentInput = ({
 
   return (
     <div
-      className={cn("flex items-start gap-2 pb-2 comment-row", className, {
-        "pl-10 pt-2": !reachLimit,
-      })}
+      className={cn("flex items-start gap-2 pb-2", {
+        "pl-10 pt-2": !reachLimit && depth != 0,
+      }, className)}
     >
       <Avatar
         size={32}
