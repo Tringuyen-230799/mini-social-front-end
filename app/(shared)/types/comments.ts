@@ -1,3 +1,5 @@
+import { DocumentType, NodeType, TextType } from "@tiptap/core";
+
 export interface AllCommentsResponse {
   status: number;
   message: string;
@@ -14,7 +16,7 @@ export interface IComment {
   post_id: number;
   user_id: number;
   parent_comment_id: number | null;
-  content: string;
+  content: CommentPayload;
   created_at: string;
   updated_at: string;
   reply_user_id: number | null;
@@ -31,7 +33,7 @@ export interface User {
 }
 
 export interface CreateCommentPayload {
-  content: string;
+  content: CommentPayload;
   postId: number;
   mentions?: Array<number>;
   parentId?: number;
@@ -42,3 +44,13 @@ export interface CreateCommentRespone {
   message: string;
   data: IComment;
 }
+
+export type CommentPayload = DocumentType<
+  Record<string, any> | undefined,
+  NodeType<
+    string,
+    undefined | Record<string, any>,
+    any,
+    (NodeType | TextType)[]
+  >[]
+>;

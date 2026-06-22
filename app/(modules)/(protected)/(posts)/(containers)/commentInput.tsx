@@ -1,8 +1,7 @@
 "use client";
-
-import useCreateComment from "@/app/(shared)/hooks/useCreateComment";
+import Editor from "@/app/(components)/editor/Editor";
 import { useAuth } from "@/app/(shared)/provider/authProvider";
-import { CreateCommentPayload } from "@/app/(shared)/types/comments";
+import { CommentPayload, CreateCommentPayload } from "@/app/(shared)/types/comments";
 import { cn } from "@/app/(shared)/utils/clsx";
 import {
   UserOutlined,
@@ -10,8 +9,7 @@ import {
   SmileOutlined,
   PictureOutlined,
 } from "@ant-design/icons";
-import { Avatar, Button, Input } from "antd";
-import TextArea from "antd/es/input/TextArea";
+import { Avatar, Button } from "antd";
 import { useState } from "react";
 
 interface CommentInputProps {
@@ -27,6 +25,7 @@ interface CommentInputProps {
   onCreate: (payload: CreateCommentPayload) => void;
   isCreating: boolean;
   depth: number;
+  author?: string;
 }
 
 const CommentInput = ({
@@ -40,38 +39,37 @@ const CommentInput = ({
   onCreate,
   isCreating,
   depth,
-}: CommentInputProps) => {
+  author,
+}: CommentInputProps) => {  
   const { user } = useAuth();
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState<CommentPayload | undefined>();
 
   const handleSubmit = async () => {
-    if (!content.trim()) return;
+    if (!content) return
+
     const newComment = {
       content,
       parentId: reachLimit ? rootCommentId : parentId,
       postId,
-    } as CreateCommentPayload;
+    };
 
     try {
       onCreate(newComment);
-      setContent("");
+      setContent(undefined);
     } catch (error) {
       console.error("Failed to post comment:", error);
     }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit();
-    }
-  };
+  }
 
   return (
     <div
-      className={cn("flex items-start gap-2 pb-2", {
-        "pl-10 pt-2": !reachLimit && depth != 0,
-      }, className)}
+      className={cn(
+        "flex items-start gap-2 pb-2",
+        {
+          "pl-10 pt-2": !reachLimit && depth != 0,
+        },
+        className,
+      )}
     >
       <Avatar
         size={32}
@@ -81,18 +79,14 @@ const CommentInput = ({
       />
 
       <div className="w-full bg-neutral-100 rounded-2xl p-1">
-        <TextArea
-          value={content}
-          autoSize
-          disabled={isCreating}
-          onChange={(e) => setContent(e.target.value)}
-          className="w-full border-transparent! focus:border-transparent!"
-          variant="borderless"
-          placeholder={placeholder}
-          autoFocus={autoFocus}
-          onKeyDown={handleKeyDown}
+        <Editor
+          content={content}
+          onChange={setContent}
+          editable
+          handleOnSubmit={handleSubmit}
         />
-        <div className="self-end pl-2.5 flex justify-between">
+
+        <div className="self-end flex justify-between">
           <div className="flex">
             <Button
               disabled={isCreating}
@@ -114,7 +108,7 @@ const CommentInput = ({
             variant="text"
             className="bg-transparent! border-none!"
             icon={<SendOutlined className="text-blue-900!" />}
-            onClick={handleSubmit}
+            // onClick={handleSubmit}
           />
         </div>
       </div>
