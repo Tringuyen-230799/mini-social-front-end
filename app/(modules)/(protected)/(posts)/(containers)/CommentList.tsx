@@ -46,7 +46,6 @@ const CommentList = ({
 
   const comments =
     data?.flatMap((data) => data.data.content).map((comment) => comment) || [];
-  // const comments = [];
 
   return (
     <div className="">
@@ -171,7 +170,7 @@ const CommentItem = ({
                     parentId={comment.id}
                     rootCommentId={comment.parent_comment_id!}
                     className="comment-row"
-                    author={comment.user.username}
+                    author={comment.user}
                   />
                 )}
               </>
@@ -199,7 +198,7 @@ const CommentItem = ({
                   parentId={comment.id}
                   rootCommentId={comment.parent_comment_id!}
                   className="comment-row"
-                  author={comment.user.username}
+                  author={comment.user}
                 />
               </>
             </div>

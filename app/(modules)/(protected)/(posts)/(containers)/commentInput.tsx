@@ -4,6 +4,7 @@ import { useAuth } from "@/app/(shared)/provider/authProvider";
 import {
   CommentPayload,
   CreateCommentPayload,
+  User,
 } from "@/app/(shared)/types/comments";
 import { cn } from "@/app/(shared)/utils/clsx";
 import {
@@ -13,7 +14,6 @@ import {
   PictureOutlined,
 } from "@ant-design/icons";
 import { Avatar, Button } from "antd";
-import { useState } from "react";
 
 interface CommentInputProps {
   postId: number;
@@ -28,14 +28,13 @@ interface CommentInputProps {
   onCreate: (payload: CreateCommentPayload) => void;
   isCreating: boolean;
   depth: number;
-  author?: string;
+  author?: User;
 }
 
 const CommentInput = ({
   postId,
   parentId,
   placeholder = "Write a comment...",
-  autoFocus = true,
   className = "",
   reachLimit,
   rootCommentId,
@@ -83,6 +82,8 @@ const CommentInput = ({
         <Editor
           editable
           handleOnSubmit={handleSubmit}
+          placeholder={placeholder}
+          author={author!}
         />
 
         <div className="self-end flex justify-between">
@@ -105,7 +106,6 @@ const CommentInput = ({
             variant="text"
             className="bg-transparent! border-none!"
             icon={<SendOutlined className="text-blue-900!" />}
-            // onClick={handleSubmit}
           />
         </div>
       </div>

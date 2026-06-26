@@ -3,16 +3,20 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Mention from "@tiptap/extension-mention";
-import { useCallback } from "react";
-import { CommentPayload } from "@/app/(shared)/types/comments";
+import { CommentPayload, User } from "@/app/(shared)/types/comments";
 import { Placeholder } from "@tiptap/extensions";
 import buildSuggestion from "../mention/suggestions";
+import { useEffect } from "react";
 
 const Editor = ({
   handleOnSubmit,
+  placeholder,
+  author,
 }: {
   handleOnSubmit: (content: CommentPayload) => Promise<void>;
   editable: boolean;
+  placeholder: string;
+  author: User;
 }) => {
   const editor = useEditor({
     extensions: [
@@ -24,7 +28,7 @@ const Editor = ({
         suggestion: buildSuggestion(),
       }),
       Placeholder.configure({
-        placeholder: "Write your comment..",
+        placeholder,
         showOnlyCurrent: false,
       }),
     ],
@@ -38,6 +42,31 @@ const Editor = ({
       },
     },
   });
+
+  useEffect(() => {
+    if (author) {
+      console.log(author)
+      editor?.commands.setContent({
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "mention",
+                attrs: { id: author.id, label: author.username },
+              },
+              {
+                type: "text",
+                text: " ",
+              },
+            ],
+          },
+        ],
+      });
+      editor?.commands.focus();
+    }
+  }, [author, editor]);
 
   return (
     <EditorContent

@@ -24,6 +24,8 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>(
     const selectItem = (index: number) => {
       const item = items[index];
 
+      if (item.label === "Đang tìm kiếm dữ liệu...") return;
+
       if (item) {
         command({ id: item.id, label: item.label });
       }
@@ -67,9 +69,9 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>(
     return (
       <div className="dropdown-menu">
         {items[0]?.id == "loading-placeholder" ? (
-          <Loading size={3.5}/>
+          <Loading size={3.5} />
         ) : isLoading ? (
-          <Loading size={3.5}/>
+          <Loading size={3.5} />
         ) : items.length > 0 ? (
           items.map((item, index) => (
             <MentionItem
@@ -92,17 +94,20 @@ const MentionItem = ({
   item,
   index,
   selectItem,
-  selectedIndex
+  selectedIndex,
 }: {
   item: { id: string; label: string; avatar: string };
   index: number;
   selectItem: (index: number) => void;
-  selectedIndex: number
+  selectedIndex: number;
 }) => {
   const { avatar, label } = item;
   return (
     <button
-      className={clsx("cursor-pointer, px-2", selectedIndex === index && 'is-selected')}
+      className={clsx(
+        "cursor-pointer, px-2",
+        selectedIndex === index && "is-selected",
+      )}
       key={index}
       onClick={() => selectItem(index)}
     >
