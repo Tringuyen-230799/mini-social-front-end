@@ -1,8 +1,15 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { useSuggestionStore } from "./hooks/useSuggestionState";
+import { Avatar, Empty } from "antd";
+import { UserOutlined } from "@ant-design/icons";
+import Text from "antd/es/typography/Text";
+import clsx from "clsx";
+import Loading from "./Loading";
 
 interface MentionListProps {
-  items: Array<{ id: string; name: string }>;
+  items: Array<{ id: string; label: string; avatar: string }>;
   command: (item: { id: string; label: string }) => void;
+  query: string;
 }
 
 export interface MentionListRef {
@@ -10,32 +17,31 @@ export interface MentionListRef {
 }
 
 const MentionList = forwardRef<MentionListRef, MentionListProps>(
-  (props, ref) => {
+  ({ items, command }, ref) => {
     const [selectedIndex, setSelectedIndex] = useState(0);
+    const isLoading = useSuggestionStore((state) => state.isLoading);
 
     const selectItem = (index: number) => {
-      const item = props.items[index];
+      const item = items[index];
 
       if (item) {
-        props.command({ id: item.id, label: item.name });
+        command({ id: item.id, label: item.label });
       }
     };
 
     const upHandler = () => {
-      setSelectedIndex(
-        (selectedIndex + props.items.length - 1) % props.items.length,
-      );
+      setSelectedIndex((selectedIndex + items.length - 1) % items.length);
     };
 
     const downHandler = () => {
-      setSelectedIndex((selectedIndex + 1) % props.items.length);
+      setSelectedIndex((selectedIndex + 1) % items.length);
     };
 
     const enterHandler = () => {
       selectItem(selectedIndex);
     };
 
-    useEffect(() => setSelectedIndex(0), [props.items]);
+    useEffect(() => setSelectedIndex(0), [items]);
 
     useImperativeHandle(ref, () => ({
       onKeyDown: ({ event }) => {
@@ -60,23 +66,57 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>(
 
     return (
       <div className="dropdown-menu">
-        {props.items.length ? (
-          props.items.map((item, index) => (
-            <button
-              className={index === selectedIndex ? "is-selected" : ""}
-              key={index}
-              onClick={() => selectItem(index)}
-            >
-              {item.name}
-            </button>
+        {items[0]?.id == "loading-placeholder" ? (
+          <Loading size={3.5}/>
+        ) : isLoading ? (
+          <Loading size={3.5}/>
+        ) : items.length > 0 ? (
+          items.map((item, index) => (
+            <MentionItem
+              index={index}
+              item={item}
+              selectItem={selectItem}
+              key={item.id}
+              selectedIndex={selectedIndex}
+            />
           ))
         ) : (
-          <div className="item">No result</div>
+          <Empty>There is no values</Empty>
         )}
       </div>
     );
   },
 );
+
+const MentionItem = ({
+  item,
+  index,
+  selectItem,
+  selectedIndex
+}: {
+  item: { id: string; label: string; avatar: string };
+  index: number;
+  selectItem: (index: number) => void;
+  selectedIndex: number
+}) => {
+  const { avatar, label } = item;
+  return (
+    <button
+      className={clsx("cursor-pointer, px-2", selectedIndex === index && 'is-selected')}
+      key={index}
+      onClick={() => selectItem(index)}
+    >
+      <Avatar size={36} src={avatar} icon={!avatar && <UserOutlined />} />
+      <div className="flex-1">
+        <div className="flex items-center gap-1 capitalize">
+          <Text strong className="max-w-30 truncate">
+            {label}
+          </Text>
+        </div>
+      </div>
+    </button>
+  );
+};
 
 MentionList.displayName = "MentionList";
 

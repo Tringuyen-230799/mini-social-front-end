@@ -1,45 +1,43 @@
-import { computePosition, flip, shift } from "@floating-ui/dom";
-import { posToDOMRect, ReactRenderer } from "@tiptap/react";
+import { ReactRenderer } from "@tiptap/react";
 import MentionList from "./MentionList";
-import type { Editor } from "@tiptap/react";
-import { MentionOptions } from "@tiptap/extension-mention";
-import { Node as ProseMirrorNode } from "@tiptap/pm/model";
+import { SuggestionOptions } from "@tiptap/suggestion";
+import { apiClient } from "@/lib/api";
+import { AllUserResponse } from "@/app/(shared)/types/users";
+import { useSuggestionStore } from "./hooks/useSuggestionState";
 
-export const updatePosition = (editor: Editor, element: HTMLElement) => {
-  const virtualElement = {
-    getBoundingClientRect: () =>
-      posToDOMRect(
-        editor.view,
-        editor.state.selection.from,
-        editor.state.selection.to,
-      ),
-  };
-
-  computePosition(virtualElement, element, {
-    placement: "bottom-start",
-    strategy: "absolute",
-    middleware: [shift(), flip()],
-  }).then(({ x, y, strategy }) => {
-    element.style.width = "max-content";
-    element.style.position = strategy;
-    element.style.left = `${x}px`;
-    element.style.top = `${y}px`;
-  });
-};
-
-const suggestionConfigs = [
-  {
+const buildSuggestion = (): Partial<SuggestionOptions> => {
+  return {
     char: "@",
-    items: ({ query }: { query: string }) => {
-      const allUsers = [
-        { id: "102", name: "Tri nguyễn" },
-        { id: "104", name: "Bảo Lân" },
-        { id: "105", name: "Hashi Lân" },
-      ];
+    minQueryLength: 0,
+    debounce: 300,
+    allowSpaces: true,
+    initialItems: [
+      { id: "loading-placeholder", label: "Đang tìm kiếm dữ liệu..." },
+    ],
+    items: async ({ query }: { query: string }) => {
+      try {
+        useSuggestionStore.getState().setLoading(true);
+        const search = Boolean(query) ? `&search=${query}` : "";
 
-      return allUsers
-        .filter((user) => user.name.toLowerCase().includes(query.toLowerCase()))
-        .slice(0, 5);
+        const data = await apiClient<AllUserResponse>(
+          `/api/users/mentions?limit=10${search}`,
+        );
+
+        const mentioners = data.data.content;
+
+        const items = mentioners.map((m) => ({
+          id: m.id,
+          label: m.username,
+          avatar: m.avatar_url,
+        }));
+
+        return items;
+      } catch (error) {
+        console.error(error);
+        return [];
+      } finally {
+        useSuggestionStore.getState().setLoading(false);
+      }
     },
 
     render: () => {
@@ -74,7 +72,6 @@ const suggestionConfigs = [
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onUpdate(props: any) {
-
           component?.updateProps(props);
 
           applyPosition(props);
@@ -102,76 +99,7 @@ const suggestionConfigs = [
         },
       };
     },
+  };
+};
 
-    renderLabel({
-      options,
-      node,
-    }: {
-      options: MentionOptions;
-      node: ProseMirrorNode;
-    }) {
-      return `${options.suggestion.char}${node.attrs.label || node.attrs.id}`;
-    },
-  },
-  {
-    char: "#",
-    items: ({ query }: { query: string }) => {
-      return ["Dirty Dancing", "Pirates of the Caribbean", "The Matrix"]
-        .filter((item) => item.toLowerCase().startsWith(query.toLowerCase()))
-        .slice(0, 5);
-    },
-
-    render: () => {
-      let component: ReactRenderer | null = null;
-
-      return {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onStart: (props: any) => {
-          component = new ReactRenderer(MentionList, {
-            props,
-            editor: props.editor,
-          });
-
-          if (!props.clientRect) {
-            return;
-          }
-
-          component.element.style.position = "absolute";
-
-          document.body.appendChild(component.element);
-
-          updatePosition(props.editor, component.element);
-        },
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onUpdate(props: any) {
-          component?.updateProps(props);
-
-          if (!props.clientRect) {
-            return;
-          }
-
-          updatePosition(props.editor, component!.element);
-        },
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onKeyDown(props: any) {
-          if (props.event.key === "Escape") {
-            component?.destroy();
-
-            return true;
-          }
-
-          // @ts-expect-error - TipTap internal API not fully typed
-          return component?.ref?.onKeyDown(props);
-        },
-
-        onExit() {
-          component?.destroy();
-        },
-      };
-    },
-  },
-];
-
-export default suggestionConfigs;
+export default buildSuggestion;

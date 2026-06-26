@@ -49,7 +49,7 @@ export const Comment = ({
         className="shrink-0"
       />
       <div className="flex-1">
-        <div className="bg-gray-100 rounded-2xl px-3 py-2 inline-block max-w-full">
+        <div className="bg-gray-100 rounded-2xl px-3 py-2 inline-block max-w-full capitalize">
           <p className="font-semibold text-sm">{comment.user.username}</p>
           <EditorContent editor={editor} />
         </div>

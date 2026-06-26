@@ -3,11 +3,10 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Mention from "@tiptap/extension-mention";
-import suggestions from "@/app/(components)/mention/suggestions";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { CommentPayload } from "@/app/(shared)/types/comments";
 import { Placeholder } from "@tiptap/extensions";
-import Suggestion from "@tiptap/suggestion";
+import buildSuggestion from "@/app/(components)/mention/Suggestions";
 
 const Editor = ({
   content,
@@ -26,10 +25,10 @@ const Editor = ({
         HTMLAttributes: {
           class: "mention",
         },
-        suggestions,
+        suggestion: buildSuggestion(),
       }),
       Placeholder.configure({
-        placeholder: 'Write your comment..'
+        placeholder: "Write your comment..",
       }),
     ],
     injectCSS: true,
@@ -44,7 +43,6 @@ const Editor = ({
         const [, e] = args;
         if (e.key === "Enter" && !e.shiftKey) {
           e.preventDefault();
-          e.stopPropagation();
           if (!editor?.getText().trim().length) {
             return false;
           }
