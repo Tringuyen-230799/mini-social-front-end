@@ -1,7 +1,10 @@
 "use client";
 import Editor from "@/app/(components)/editor/Editor";
 import { useAuth } from "@/app/(shared)/provider/authProvider";
-import { CommentPayload, CreateCommentPayload } from "@/app/(shared)/types/comments";
+import {
+  CommentPayload,
+  CreateCommentPayload,
+} from "@/app/(shared)/types/comments";
 import { cn } from "@/app/(shared)/utils/clsx";
 import {
   UserOutlined,
@@ -40,12 +43,11 @@ const CommentInput = ({
   isCreating,
   depth,
   author,
-}: CommentInputProps) => {  
+}: CommentInputProps) => {
   const { user } = useAuth();
-  const [content, setContent] = useState<CommentPayload | undefined>();
 
-  const handleSubmit = async () => {
-    if (!content) return
+  const handleSubmit = async (content: CommentPayload) => {
+    if (!content) return;
 
     const newComment = {
       content,
@@ -55,11 +57,10 @@ const CommentInput = ({
 
     try {
       onCreate(newComment);
-      setContent(undefined);
     } catch (error) {
       console.error("Failed to post comment:", error);
     }
-  }
+  };
 
   return (
     <div
@@ -80,8 +81,6 @@ const CommentInput = ({
 
       <div className="w-full bg-neutral-100 rounded-2xl p-1">
         <Editor
-          content={content}
-          onChange={setContent}
           editable
           handleOnSubmit={handleSubmit}
         />
@@ -93,14 +92,12 @@ const CommentInput = ({
               variant="text"
               className="bg-transparent! border-none!"
               icon={<SmileOutlined className="text-base! cursor-pointer" />}
-              onClick={handleSubmit}
             />
             <Button
               disabled={isCreating}
               variant="text"
               className="bg-transparent! border-none!"
               icon={<PictureOutlined className="text-base! cursor-pointer" />}
-              onClick={handleSubmit}
             />
           </div>
           <Button

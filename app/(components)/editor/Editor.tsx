@@ -3,19 +3,15 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Mention from "@tiptap/extension-mention";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { CommentPayload } from "@/app/(shared)/types/comments";
 import { Placeholder } from "@tiptap/extensions";
-import buildSuggestion from "@/app/(components)/mention/Suggestions";
+import buildSuggestion from "../mention/suggestions";
 
 const Editor = ({
-  content,
-  onChange,
   handleOnSubmit,
 }: {
-  content: CommentPayload | undefined;
-  onChange: (value: CommentPayload) => void;
-  handleOnSubmit: () => void;
+  handleOnSubmit: (content: CommentPayload) => Promise<void>;
   editable: boolean;
 }) => {
   const editor = useEditor({
@@ -29,6 +25,7 @@ const Editor = ({
       }),
       Placeholder.configure({
         placeholder: "Write your comment..",
+        showOnlyCurrent: false,
       }),
     ],
     injectCSS: true,
@@ -39,31 +36,37 @@ const Editor = ({
       attributes: {
         class: "focus:outline-none! pl-2",
       },
-      handleKeyDown: (...args) => {
-        const [, e] = args;
+    },
+  });
+
+  return (
+    <EditorContent
+      editor={editor}
+      onKeyDown={(e) => {
         if (e.key === "Enter" && !e.shiftKey) {
           e.preventDefault();
+          e.stopPropagation();
           if (!editor?.getText().trim().length) {
             return false;
           }
 
-          handleOnSubmit();
+          const rawJson = editor.getJSON();
+          const content = rawJson.content;
+
+          if (content && content.length > 0) {
+            const lastNode = content[content.length - 1];
+
+            if (lastNode.type === "paragraph" && !lastNode.content) {
+              content.pop();
+            }
+          }
+
+          handleOnSubmit(rawJson);
           editor?.commands.clearContent(true);
-
-          return true;
         }
-      },
-    },
-    content,
-    onUpdate: useCallback(
-      ({ editor }) => {
-        onChange(editor.getJSON());
-      },
-      [onChange],
-    ),
-  });
-
-  return <EditorContent editor={editor} />;
+      }}
+    />
+  );
 };
 
 export default Editor;
