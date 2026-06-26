@@ -3,11 +3,11 @@
 import { useComment } from "@/app/(shared)/hooks/useComment";
 import { CreateCommentPayload, IComment } from "@/app/(shared)/types/comments";
 import { useEffect, useState } from "react";
-import CommentInput from "./CommentInput";
 import { useParentComment } from "@/app/(shared)/hooks/useParentComment";
 import useCreateComment from "@/app/(shared)/hooks/useCreateComment";
 import { cn } from "@/app/(shared)/utils/clsx";
 import { Comment } from "@/app/(components)/comment";
+import CommentInput from "./CommentInput";
 
 const CommentList = ({
   showComments,
@@ -68,6 +68,7 @@ const CommentList = ({
           })}
         </div>
       )}
+
       <CommentInput
         postId={postId}
         autoFocus
@@ -127,8 +128,6 @@ const CommentItem = ({
     createComment(payload);
   };
 
-  console.log(showReply);
-
   return (
     <>
       <div
@@ -166,11 +165,12 @@ const CommentItem = ({
                     postId={postId}
                     depth={comment.depth + 1}
                     isCreating={isCreating}
-                    onCreate={handleOncreate} 
+                    onCreate={handleOncreate}
                     reachLimit={reachLimitDepth}
                     parentId={comment.id}
                     rootCommentId={comment.parent_comment_id!}
                     className="comment-row"
+                    author={comment.user}
                   />
                 )}
               </>
@@ -198,6 +198,7 @@ const CommentItem = ({
                   parentId={comment.id}
                   rootCommentId={comment.parent_comment_id!}
                   className="comment-row"
+                  author={comment.user}
                 />
               </>
             </div>

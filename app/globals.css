@@ -1,7 +1,20 @@
 @import "tailwindcss";
 
-::root {
+:root {
   --size: 4rem;
+
+  /* Colors */
+  --white: #ffffff;
+  --gray-1: #e5e7eb;
+  --gray-2: #f3f4f6;
+  --gray-3: #f9fafb;
+  --purple: #8b5cf6;
+  --purple-light: #ede9fe;
+  --purple-contrast: #6d28d9;
+
+  /* Effects */
+  --shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 html,
@@ -214,3 +227,161 @@ body {
   }
 }
 
+.tiptap {
+  :first-child {
+    margin-top: 0;
+  }
+
+  .mention {
+    background-color: var(--purple-light);
+    border-radius: 0.4rem;
+    box-decoration-break: clone;
+    color: var(--purple);
+    padding: 0.1rem 0.3rem;
+    &::after {
+      content: "\200B";
+    }
+  }
+}
+
+.dropdown-menu {
+  background: var(--white);
+  border: 1px solid var(--gray-1);
+  border-radius: 0.7rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  overflow: auto;
+  padding: 0.6rem;
+  position: relative;
+  overflow-y: auto;
+  height: auto;
+  max-height: 400px;
+
+  button {
+    align-items: center;
+    background-color: transparent;
+    display: flex;
+    gap: 0.4rem;
+    text-align: left;
+    width: 100%;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.2rem;
+    cursor: pointer;
+    &:hover,
+    &:hover.is-selected {
+      background-color: var(--color-gray-200);
+    }
+
+    &.is-selected {
+      background-color: var(--gray-2);
+    }
+  }
+}
+
+.tiptap {
+  :first-child {
+    margin-top: 0;
+  }
+
+  .mention {
+    background-color: var(--purple-light);
+    border-radius: 0.4rem;
+    box-decoration-break: clone;
+    color: var(--purple);
+    padding: 0.1rem 0.3rem;
+    &::after {
+      content: "\200B";
+    }
+  }
+
+  p:focus {
+    border: transparent;
+  }
+
+  /* Suggestion inline decoration styles (created by @tiptap/suggestion)
+     Visible highlight to help see the active suggestion range in demos */
+  [data-decoration-id] {
+    /* Reuse theme variables from demos setup for consistent look */
+    background-color: var(--purple-light);
+    border-bottom: 2px solid var(--purple-contrast);
+    border-radius: 0.2rem;
+    padding: 0 0.18rem;
+    box-decoration-break: clone;
+  }
+
+  /* When the decoration is empty (no query), add a subtle hint */
+  [data-decoration-id].is-empty::after {
+    content: "\00A0";
+    border-bottom: 1px dotted var(--gray-3);
+  }
+
+  .suggestion {
+    background-color: var(--purple-light);
+    border-radius: 0.4rem;
+    box-decoration-break: clone;
+    color: var(--purple);
+    padding: 0.1rem 0.3rem;
+  }
+
+  .suggestion::after {
+    content: "\200B";
+  }
+
+  .suggestion.is-empty::after {
+    content: "\00A0";
+    border-bottom: 1px dotted rgba(31, 41, 55, 0.12);
+  }
+
+  .has-focus {
+    border-radius: 3px;
+    box-shadow: 0 0 0 2px var(--purple);
+  }
+}
+
+.tiptap p.is-empty.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.loader,
+.loader:before,
+.loader:after {
+  border-radius: 100%;
+  width: 2.5em;
+  height: 2.5em;
+  animation: bblFadInOut 1.8s infinite ease-in-out;
+}
+.loader {
+  color: #6d28d9;
+  position: relative;
+  animation-delay: -0.16s;
+}
+.loader:before,
+.loader:after {
+  content: "";
+  position: absolute;
+  top: 0px;
+}
+.loader:before {
+  left: -3.5em;
+  animation-delay: -0.32s;
+}
+.loader:after {
+  left: 3.5em;
+}
+
+@keyframes bblFadInOut {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  40% {
+    box-shadow: 0 2.5em 0 0;
+  }
+}
