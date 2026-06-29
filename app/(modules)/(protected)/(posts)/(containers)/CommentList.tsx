@@ -8,20 +8,27 @@ import useCreateComment from "@/app/(shared)/hooks/useCreateComment";
 import { cn } from "@/app/(shared)/utils/clsx";
 import { Comment } from "@/app/(components)/comment";
 import CommentInput from "./CommentInput";
+import { useAuth } from "@/app/(shared)/provider/authProvider";
+import { Post } from "@/app/(shared)/types/post";
 
-const CommentList = ({
+const CommentWrapper = ({
   showComments,
   postId,
   onIncreaseTotalComment,
+  userPost,
 }: {
   showComments: boolean;
   postId: number;
   onIncreaseTotalComment: () => void;
+  userPost: Post["user"];
 }) => {
+  const { user } = useAuth();
   const { data, mutate } = useComment({
     postId,
     enabled: showComments,
   });
+
+  const isOwner = user?.id === userPost.id;
 
   useEffect(() => {
     const handleRefetch = () => {
@@ -76,6 +83,15 @@ const CommentList = ({
         isCreating={isCreating}
         onCreate={handleOncreate}
         depth={0}
+        author={
+          !isOwner
+            ? {
+                id: userPost.id,
+                username: userPost.username,
+                avatar: userPost?.avatar_url || "",
+              }
+            : undefined
+        }
       />
     </div>
   );
@@ -94,6 +110,7 @@ const CommentItem = ({
   classNames?: string;
   onIncreaseTotalComment: () => void;
 }) => {
+  const { user } = useAuth();
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [showReply, setShowReply] = useState(false);
   const MAX_LEVEL_DEPTH = 3;
@@ -101,6 +118,8 @@ const CommentItem = ({
     parentId: comment.id,
     enabled: showReply,
   });
+
+  const isOwner = user?.id == comment.user.id;
 
   useEffect(() => {
     const handleRefetch = () => {
@@ -170,7 +189,7 @@ const CommentItem = ({
                     parentId={comment.id}
                     rootCommentId={comment.parent_comment_id!}
                     className="comment-row"
-                    author={comment.user}
+                    author={!isOwner ? comment.user : undefined}
                   />
                 )}
               </>
@@ -198,7 +217,7 @@ const CommentItem = ({
                   parentId={comment.id}
                   rootCommentId={comment.parent_comment_id!}
                   className="comment-row"
-                  author={comment.user}
+                  author={!isOwner ? comment.user : undefined}
                 />
               </>
             </div>
@@ -221,6 +240,7 @@ const CommentItem = ({
             reachLimit={reachLimitDepth}
             parentId={comment.id}
             rootCommentId={comment.parent_comment_id!}
+            author={!isOwner ? comment.user : undefined}
           />
         </div>
       )}
@@ -228,7 +248,7 @@ const CommentItem = ({
   );
 };
 
-export default CommentList;
+export default CommentWrapper;
 
 {
   /* {showReplyInput && (

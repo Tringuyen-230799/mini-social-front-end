@@ -24,6 +24,11 @@ export interface IComment {
   user: User;
   replies?: IComment[];
   depth: number;
+  resources: Array<{
+    id: number;
+    url: string;
+    alt_text: string | null;
+  }>;
 }
 
 export interface User {
@@ -31,12 +36,11 @@ export interface User {
   username: string;
   avatar: string;
 }
-
 export interface CreateCommentPayload {
   content: CommentPayload;
   postId: number;
-  mentions?: Array<number>;
   parentId?: number;
+  file?: File;
 }
 
 export interface CreateCommentRespone {
@@ -54,3 +58,11 @@ export type CommentPayload = DocumentType<
     (NodeType | TextType)[]
   >[]
 >;
+
+export interface EditCommentPayload {
+  commentId: number;
+  content: CommentPayload;
+  postId: number;
+  file?: File;
+  oldImgSrc: string;
+}

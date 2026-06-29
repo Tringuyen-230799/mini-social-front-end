@@ -137,11 +137,6 @@ export default function Upload({
               icon={<CloseOutlined />}
             />
           )}
-          {/* <Popover placement="leftTop">
-            <div className="w-full! h-full! text-white! absolute top-0 flex items-center justify-center bg-neutral-800/40">
-              Edit
-            </div>
-          </Popover> */}
         </>
       ) : (
         <div

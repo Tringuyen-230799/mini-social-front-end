@@ -8,7 +8,7 @@ import Loading from "./Loading";
 
 interface MentionListProps {
   items: Array<{ id: string; label: string; avatar: string }>;
-  command: (item: { id: string; label: string }) => void;
+  command: (item: { id: string; label: string; avatar: string }) => void;
   query: string;
 }
 
@@ -27,7 +27,7 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>(
       if (item.label === "Đang tìm kiếm dữ liệu...") return;
 
       if (item) {
-        command({ id: item.id, label: item.label });
+        command({ id: item.id, label: item.label, avatar: item.avatar });
       }
     };
 

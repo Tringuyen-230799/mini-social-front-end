@@ -1,22 +1,30 @@
 "use client";
 
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, mergeAttributes } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Mention from "@tiptap/extension-mention";
 import { CommentPayload, User } from "@/app/(shared)/types/comments";
 import { Placeholder } from "@tiptap/extensions";
 import buildSuggestion from "../mention/suggestions";
-import { useEffect } from "react";
+import { RefObject, useEffect } from "react";
+import clsx from "clsx";
 
 const Editor = ({
   handleOnSubmit,
   placeholder,
   author,
+  content,
+  editable,
+  containerRef,
+  onUndo,
 }: {
   handleOnSubmit: (content: CommentPayload) => Promise<void>;
-  editable: boolean;
+  editable?: boolean;
   placeholder: string;
-  author: User;
+  author?: User;
+  content?: CommentPayload;
+  onUndo?: () => void;
+  containerRef?: RefObject<HTMLDivElement | null>;
 }) => {
   const editor = useEditor({
     extensions: [
@@ -25,6 +33,16 @@ const Editor = ({
         HTMLAttributes: {
           class: "mention",
         },
+        renderHTML({ options, node }) {
+          return [
+            "a",
+            mergeAttributes(
+              { href: "/profile/1", target: "_blank" },
+              options.HTMLAttributes,
+            ),
+            `${options.suggestion.char}${node.attrs.label ?? node.attrs.id}`,
+          ];
+        },
         suggestion: buildSuggestion(),
       }),
       Placeholder.configure({
@@ -32,20 +50,22 @@ const Editor = ({
         showOnlyCurrent: false,
       }),
     ],
+    ...(!content ? {} : { content }),
     injectCSS: true,
     immediatelyRender: false,
-    editable: true,
+    editable: editable,
     autofocus: true,
     editorProps: {
       attributes: {
-        class: "focus:outline-none! pl-2",
+        class: clsx("focus:outline-none!", {
+          "pl-2": editable,
+        }),
       },
     },
   });
 
   useEffect(() => {
     if (author) {
-      console.log(author)
       editor?.commands.setContent({
         type: "doc",
         content: [
@@ -67,6 +87,35 @@ const Editor = ({
       editor?.commands.focus();
     }
   }, [author, editor]);
+
+  useEffect(() => {
+    const handleClick = (event: any) => {
+      if (
+        containerRef?.current &&
+        !containerRef?.current.contains(event.target)
+      ) {
+        if (onUndo) {
+          onUndo();
+        }
+        editor?.commands?.setContent(content!);
+        editor?.setEditable(false);
+      }
+    };
+
+    if (editable) {
+      editor?.setEditable(true);
+      editor?.commands?.focus("end");
+
+      document.addEventListener("mousedown", handleClick);
+    }
+
+    if (!editable) {
+      editor?.commands?.setContent(content!);
+      editor?.setEditable(false);
+    }
+
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [editable, editor, content, containerRef, onUndo]);
 
   return (
     <EditorContent

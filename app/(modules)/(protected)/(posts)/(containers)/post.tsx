@@ -175,6 +175,7 @@ export default function Post({
       <CommentWrapper
         showComments={showComments}
         postId={post.id}
+        userPost={post.user}
         onIncreaseTotalComment={() => setTotalComments((total) => total + 1)}
       />
     </Card>

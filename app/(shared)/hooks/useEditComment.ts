@@ -1,15 +1,15 @@
 import useSWRMutation from "swr/mutation";
 import { API_ENDPOINTS } from "../constant/endpoint";
 import {
-  CreateCommentPayload,
   CreateCommentRespone,
+  EditCommentPayload,
   IComment,
 } from "../types/comments";
 import { apiClient } from "@/lib/api";
 
 const fetcher = async (
   url: string,
-  { arg }: { arg: CreateCommentPayload },
+  { arg }: { arg: EditCommentPayload },
 ): Promise<CreateCommentRespone> => {
   const form = new FormData();
 
@@ -30,13 +30,13 @@ const fetcher = async (
     }
   }
 
-  return await apiClient(url, {
-    method: "POST",
+  return await apiClient(`${url}/${arg.commentId}`, {
+    method: "PATCH",
     body: form,
   });
 };
 
-const useCreateComment = (onSuccess?: (data: IComment) => void) => {
+const useEditComment = (onSuccess?: (data: IComment) => void) => {
   const { trigger, isMutating } = useSWRMutation(
     `${API_ENDPOINTS.COMMENT.LIST}`,
     fetcher,
@@ -48,9 +48,9 @@ const useCreateComment = (onSuccess?: (data: IComment) => void) => {
   );
 
   return {
-    createComment: trigger,
-    isCreating: isMutating,
+    editComment: trigger,
+    isEditing: isMutating,
   };
 };
 
-export default useCreateComment;
+export default useEditComment;
