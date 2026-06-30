@@ -1,4 +1,8 @@
-import { CommentPayload, IComment } from "@/app/(shared)/types/comments";
+import {
+  CommentPayload,
+  EditCommentPayload,
+  IComment,
+} from "@/app/(shared)/types/comments";
 import { cn } from "@/app/(shared)/utils/clsx";
 import { getTimeOfComment } from "@/app/(shared)/utils/time";
 import {
@@ -37,19 +41,27 @@ export const Comment = ({
 }) => {
   const originalImgSrc = comment.resources?.[0].url;
   const { user } = useAuth();
+  const isOwner = user?.id === comment.user.id;
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isCanEdit, setIsCanEdit] = useState<boolean>(false);
   const [showEdit, setShowEdit] = useState<boolean>(false);
-  const isOwner = user?.id === comment.user.id;
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [file, setFile] = useState<File | undefined>();
   const [src, setSrc] = useState<string>(originalImgSrc);
+  const [content, setContent] = useState(comment?.content);
 
-  const { editComment } = useEditComment();
+  const { editComment } = useEditComment({
+    commentId: comment.id,
+    onSuccess: (data) => {
+      setSrc(data?.resource?.url);
+      setContent(data.content);
+    },
+  });
 
   const handleOpenFileInput = () => {
     inputRef?.current?.click();
   };
+
   const handleOnchange = (
     e: ChangeEvent<HTMLInputElement, HTMLInputElement>,
   ) => {
@@ -66,14 +78,20 @@ export const Comment = ({
 
     const newComment = {
       content,
-      commentId: comment.id,
       postId: comment.post_id,
-      ...(file ? { image: file } : null),
-      oldImgSrc: originalImgSrc,
-    };
+      ...(comment?.parent_comment_id
+        ? {
+            parentId: comment.parent_comment_id,
+          }
+        : null),
+      ...(file
+        ? { image: file, oldImgSrc: originalImgSrc }
+        : { oldImgSrc: src }),
+    } as EditCommentPayload;
 
     try {
       editComment(newComment);
+      setIsCanEdit(false);
     } catch (error) {
       console.error("Failed to post comment:", error);
     }
@@ -94,6 +112,7 @@ export const Comment = ({
     setIsCanEdit(false);
     setSrc(originalImgSrc);
     setFile(undefined);
+    setContent(comment.content);
     if (inputRef?.current) {
       inputRef.current.value = "";
     }
@@ -135,7 +154,7 @@ export const Comment = ({
               editable={isCanEdit}
               handleOnSubmit={handleSubmit}
               placeholder={"Change your comment"}
-              content={comment.content}
+              content={content}
               key={comment.id}
               containerRef={containerRef}
               onUndo={handleUndoContent}

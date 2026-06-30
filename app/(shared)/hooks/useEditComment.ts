@@ -1,16 +1,15 @@
 import useSWRMutation from "swr/mutation";
 import { API_ENDPOINTS } from "../constant/endpoint";
 import {
-  CreateCommentRespone,
   EditCommentPayload,
-  IComment,
+  EditCommentRespone,
 } from "../types/comments";
 import { apiClient } from "@/lib/api";
 
 const fetcher = async (
   url: string,
   { arg }: { arg: EditCommentPayload },
-): Promise<CreateCommentRespone> => {
+): Promise<EditCommentRespone> => {
   const form = new FormData();
 
   for (const key in arg) {
@@ -30,15 +29,21 @@ const fetcher = async (
     }
   }
 
-  return await apiClient(`${url}/${arg.commentId}`, {
+  return await apiClient(`${url}`, {
     method: "PATCH",
     body: form,
   });
 };
 
-const useEditComment = (onSuccess?: (data: IComment) => void) => {
+const useEditComment = ({
+  commentId,
+  onSuccess,
+}: {
+  commentId: number;
+  onSuccess?: (data: EditCommentRespone['data']) => void;
+}) => {
   const { trigger, isMutating } = useSWRMutation(
-    `${API_ENDPOINTS.COMMENT.LIST}`,
+    `${API_ENDPOINTS.COMMENT.LIST}/${commentId}`,
     fetcher,
     {
       onSuccess: (data) => {

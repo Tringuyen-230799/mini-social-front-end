@@ -140,7 +140,10 @@ const Editor = ({
           }
 
           handleOnSubmit(rawJson);
-          editor?.commands.clearContent(true);
+
+          if (!editable) {
+            editor?.commands.clearContent(true);
+          }
         }
       }}
     />

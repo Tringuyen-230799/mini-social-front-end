@@ -59,10 +59,25 @@ export type CommentPayload = DocumentType<
   >[]
 >;
 
+export interface EditCommentRespone {
+  status: number;
+  message: string;
+  data: EditComment;
+}
+
 export interface EditCommentPayload {
-  commentId: number;
   content: CommentPayload;
   postId: number;
+  parentId?: number;
   file?: File;
-  oldImgSrc: string;
+  oldImgSrc?: string;
+}
+
+export interface EditComment {
+  content: CommentPayload;
+  resource: {
+    id: number;
+    url: string;
+    alt_text: string | null;
+  };
 }
